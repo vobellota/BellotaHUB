@@ -1,0 +1,278 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Estibas</ui:define>
+    
+    <ui:define name="viewname">
+        <li>Estibas</li>
+        <li>/</li>
+        <li><p:link outcome="/Distribucion/ListasDeEmpaque/Estibas">Estibas</p:link></li>
+    </ui:define>
+    
+    <ui:define name="content">
+        
+        <h:form id="alerta_div" rendered="#{EstibasBean.alarmable != 0}">
+            <p:commandButton class="icon_alerta_div" icon="fa fa-warning"/>
+            <p:inputText class="maximoCajasAgruparInput" value="#{EstibasBean.cadenaAlarma}" style="width:96%" readonly="true"/>
+            <p:commandButton class="icon_alerta_div_close" icon="fa fa-times" onclick="btnAlerta(event)" type="button"/>
+            <p:dataList value="#{EstibasBean.listaUnidadesSinParame}" var="listUnitites" class="datalist">
+                #{listUnitites}
+            </p:dataList>
+        </h:form>
+        <br/>
+        <h:form id="formulario">
+            <p:growl id="msgs" showDetail="true"/>
+            <!--** Datatable, conversion, arreglo y variable para hacer "foreach" **-->
+            
+                    <h:commandLink>
+                        <p:graphicImage url="../../resources/img/excel.png" width="24"/>
+                        <p:dataExporter type="xls" target="ESTIBAS" fileName="Excel" />
+                    </h:commandLink>
+            
+            <p:dataTable id="ESTIBAS"  value="#{EstibasBean.listaEstibas}" 
+                         var="estibas"
+                         reflow="true"
+                         editable="true" 
+                         paginator="true"
+                         rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+                
+                <!--** Breadcrumb **-->
+                
+                <f:facet name="header">
+                    Estibas
+                </f:facet>
+                
+                <!--** Eventos AJAX asociados a la tabla **-->
+                
+                <p:ajax event="rowEdit" listener="#{EstibasBean.onRowEdit}" update=":formulario:msgs ESTIBAS"></p:ajax>
+                <p:ajax event="rowEditCancel" listener="#{EstibasBean.onRowCancel}" update=":formulario:msgs ESTIBAS"></p:ajax>
+                
+                <!--** Columnas de la tabla **-->
+                
+                <p:column headerText="Codigo de la Estiba" filterBy="#{estibas.codigoEstiba}" sortBy="#{estibas.codigoEstiba}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{estibas.codigoEstiba}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="codigoEstibaInput" value="#{estibas.codigoEstiba}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Descripcion" filterBy="#{estibas.descripcionEstiba}" sortBy="#{estibas.descripcionEstiba}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{estibas.descripcionEstiba}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="descripcionEstibaInput" value="#{estibas.descripcionEstiba}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Permite Agrupar Referencias" filterBy="#{estibas.permiteAgruparReferencias}" sortBy="#{estibas.permiteAgruparReferencias}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{estibas.permiteAgruparReferencias}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="permiteAgruparReferenciasInput" value="#{estibas.permiteAgruparReferencias}" style="width:100%">
+                                <f:selectItem itemLabel="Selecione..." itemValue="" />
+                                <f:selectItem itemLabel="Si" itemValue="Si" />
+                                <f:selectItem itemLabel="No" itemValue="No" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Peso Máximo Soportado" filterBy="#{estibas.pesoMaximoSoportado}" sortBy="#{estibas.pesoMaximoSoportado}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{estibas.pesoMaximoSoportado}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="pesoMaximoSoportadoInput" value="#{estibas.pesoMaximoSoportado}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Ancho" filterBy="#{estibas.ancho}" sortBy="#{estibas.ancho}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{estibas.ancho}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="anchoInput" value="#{estibas.ancho}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Largo" filterBy="#{estibas.largo}" sortBy="#{estibas.largo}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{estibas.largo}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="largoInput" value="#{estibas.largo}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Altura Máxima Estiba" filterBy="#{estibas.alturaMaximaEstiba}" sortBy="#{estibas.alturaMaximaEstiba}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{estibas.alturaMaximaEstiba}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="alturaMaximaEstibaInput" value="#{estibas.alturaMaximaEstiba}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Factor Estiba" filterBy="#{estibas.factorEstiba}" sortBy="#{estibas.factorEstiba}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{estibas.factorEstiba}" /></f:facet>
+                        <f:facet name="input"><h:outputText value="#{estibas.factorEstiba}" style="padding:6px 12px;" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Estado" filterBy="#{estibas.estadoEstiba}" sortBy="#{estibas.estadoEstiba}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{estibas.estadoEstiba}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="estadoEstibaInput" value="#{estibas.estadoEstiba}" style="width:100%">
+                                <f:selectItem itemLabel="Selecione..." itemValue="" />
+                                <f:selectItem itemLabel="Activo" itemValue="Activo" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="Inactivo" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <!--Editar registro boton-->
+                <!--*********************-->
+                <p:column style="width:35px;">
+                    <p:rowEditor />
+                </p:column>
+                
+                <!--Eliminar registro boton que diaspara modal y manda los parametros-->
+                <!--*********************************-->
+                <p:column>
+                    <p:commandButton oncomplete="PF('dialogDelete').show()" icon="fa fa-trash" title="Borrar Registro">
+                        <f:setPropertyActionListener value="#{estibas}" target="#{EstibasBean.selectedEstibasRow}" />
+                    </p:commandButton>
+                </p:column>  
+                
+            </p:dataTable>
+            
+            <!-- Boton de la Modal del Formulario de agregar-->
+            <!--********************************************-->
+            <h:panelGrid columns="1" cellpadding="5">
+                <p:commandButton value="Crear" type="button" onclick="PF('dialogAdd').show();" /> 
+            </h:panelGrid>
+            
+        </h:form>
+        
+        <!--Modal del Formulario de Eliminar-->
+        <!--*********************************-->
+        <h:form>
+            
+            <p:dialog header="Eliminar Registro" widgetVar="dialogDelete" 
+                      modal="true" showEffect="fade" hideEffect="fade" 
+                      resizable="false" id="modal_deleted">
+                <p:outputPanel id="deleteDetail">
+                    <p:outputLabel value="¿Desea eliminar este registro?" />
+                    <br /><br />
+                    <p:commandButton value="No" type="button" onclick="PF('dialogDelete').hide();" icon="fa fa-close" style="margin-left:10px; float:right !important;"/>
+                    <p:commandButton value="Si" id="btn_modal_delete"
+                                     action="#{EstibasBean.onDeletedAcepted}" update=":formulario:ESTIBAS,:formulario:msgs"
+                                     icon="fa fa-check" oncomplete="PF('dialogDelete').hide();" style="float:right !important;"/>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
+        
+        <!--Modal del Formulario de Agregar-->
+        <!--*********************************-->
+        <h:form id="form_save">      
+            
+            <p:dialog header="Modal" widgetVar="dialogAdd" modal="true">
+                <p:panel id="output">
+                    
+                    <p:panelGrid columns="3">
+                        <p:outputLabel for="codigoEstiba" value="Codigo Estiba: " />
+                        <p:inputText placeholder="Codigo Estiba"
+                                    id="codigoEstiba"
+                                    required="true"
+                                    value="#{EstibasBean.nuevasEstibas.codigoEstiba}" />
+                        <p:message for="codigoEstiba" />
+                        
+                        <p:outputLabel for="descripcionEstiba" value="Descripcion Estiba:" />
+                        <p:inputText placeholder="Descripcion Estiba"
+                                    id="descripcionEstiba"
+                                    value="#{EstibasBean.nuevasEstibas.descripcionEstiba}" />
+                        <p:message for="descripcionEstiba" />
+                        
+                        <p:outputLabel for="permiteAgruparreferencias" value="Permite Agrupar Referencias:" />
+                        <p:selectOneMenu id="permiteAgruparreferencias" value="#{EstibasBean.nuevasEstibas.permiteAgruparReferencias}" 
+                                         style="width:100%" required="true">
+                            <f:selectItem itemLabel="Selecione..." itemValue="" />
+                            <f:selectItem itemLabel="Si" itemValue="Si" />
+                            <f:selectItem itemLabel="No" itemValue="No" />
+                        </p:selectOneMenu>
+                        <p:message for="permiteAgruparreferencias" />
+                        
+                        <p:outputLabel for="pesoMaximoSoportado" value="Peso Máximo Soportado:" />
+                        <p:inputText placeholder="Peso Máximo Soportado:"
+                                    id="pesoMaximoSoportado"
+                                    value="#{EstibasBean.nuevasEstibas.pesoMaximoSoportado}" 
+                                    required="true">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{EstibasBean.pesoMaximoVar}"/>
+                            <!--****************************-->
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="pesoMaximoSoportado" />
+                        
+                        <p:outputLabel for="ancho" value="Ancho:" />
+                        <p:inputText placeholder="Ancho:"
+                                    id="ancho"
+                                    value="#{EstibasBean.nuevasEstibas.ancho}" required="true">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{EstibasBean.anchoTempVar}"/>
+                            <!--****************************-->
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="ancho" />
+                        
+                        <p:outputLabel for="largo" value="Largo:" />
+                        <p:inputText placeholder="Largo:"
+                                    id="largo"
+                                    value="#{EstibasBean.nuevasEstibas.largo}" required="true">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{EstibasBean.largoTempVar}"/>
+                            <!--****************************-->
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="largo" />
+                        
+                        <p:outputLabel for="alturaMaximaEstiba" value="Altura Máxima Estiba:" />
+                        <p:inputText placeholder="Altura Máxima Estiba:"
+                                    id="alturaMaximaEstiba"
+                                    value="#{EstibasBean.nuevasEstibas.alturaMaximaEstiba}"
+                                    required="true">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{EstibasBean.altoTempVar}" update="form_save:factorEstiba"/>
+                            <!--****************************-->
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="alturaMaximaEstiba" />
+                        
+                        <p:outputLabel for="factorEstiba" value="Factor Estiba (Calculado)" />
+                        <p:inputText placeholder="Factor Estiba (Calculado)"
+                                    id="factorEstiba"
+                                    readonly="true"
+                                    value="#{EstibasBean.resultadoTemp}">
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="factorEstiba" />
+                        
+                    </p:panelGrid>
+                    <br/>
+                    <p:commandButton value="Guardar" id="btn_estiba_save"
+                                     action="#{EstibasBean.onStoring}" update=":formulario:ESTIBAS,:formulario:msgs,output"
+                                     style="margin-right:20px;" icon="fa fa-send" 
+                                     oncomplete="handleSubmit(args,'dialogAdd');" />
+                    
+                    <p:commandButton onclick="dialogAdd.hide()" class="hidden_button_close" style="display:none !important;"/>
+                </p:panel>
+            </p:dialog>
+            
+        </h:form>
+        
+    </ui:define>
+</ui:composition>
+    

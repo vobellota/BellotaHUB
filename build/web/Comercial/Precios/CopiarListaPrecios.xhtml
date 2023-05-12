@@ -1,0 +1,52 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Copiar Lista Precio</ui:define>
+
+    <ui:define name="viewname">
+        <li>Comercial</li>
+        <li>/</li>
+        <li><p:link outcome="/Comercial/Precios/Precios">Copiar Lista Precios</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="formulario">
+            <p:panel id="output">
+                <p:fieldset legend="Copiar Lista de Precios" style="margin-bottom:20px">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel for="origen" value="Lista Origen" />
+                        <p:inputText placeholder="Código de lista origen"
+                                     id="origen"
+                                     required="true"
+                                     onblur="value = value.toUpperCase()"
+                                     value="#{preciosBean.listaOrigen}" />
+
+                        <p:outputLabel for="destino" value="Lista Destino" />
+                        <p:inputText placeholder="Código de lista destino"
+                                     id="destino"
+                                     required="true"
+                                     onblur="value = value.toUpperCase()"
+                                     value="#{preciosBean.listaDestino}" />
+
+                        <p:outputLabel for="fechaIni" value="F. Inicial: " />
+                        <p:calendar id="fechaIni"
+                                    value="#{preciosBean.feInicial}"
+                                    navigator="true"
+                                    locale="es"
+                                    pattern="yyyyMMdd"
+                                    required="true" />
+
+                    </p:panelGrid>
+                </p:fieldset>
+            </p:panel>
+
+            <p:commandButton value="Guardar" id="btn_save2" action="#{preciosBean.copiarLista}"
+                             style="margin-right:20px;" icon="fa fa-save"/>
+        </h:form>
+    </ui:define>
+</ui:composition>

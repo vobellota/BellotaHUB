@@ -1,0 +1,178 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Referencia de Impuestos</ui:define>
+
+    <ui:define name="viewname">
+        <li>Financiera</li>
+        <li>/</li>
+        <li><p:link outcome="/Financiera/REFERENCIAS/IMPUESTOS">Referencia de Impuestos</p:link></li>
+    </ui:define>
+    
+    <ui:define name="content">
+        
+        <!--Escript para descargar el doc de manual de usuario-->
+        <!--*************************************-->
+        <h:form>   
+            <p:commandButton value="Manual de Uso" ajax="false" icon="fa fa-arrow-down">
+                <p:fileDownload value="#{REFERENCIASBean.fileREFERENCIAS}" />
+            </p:commandButton>      
+        </h:form>
+        <!--*************************************-->
+        
+        <br/><br/>
+        
+        <!--Formularios de busqueda partida-->
+        <h:form id="form_send_real">
+            <p:growl id="msgs" showDetail="true"/>
+            <p:panel>
+                <p:fieldset legend="Referencias de Impuestos" style="margin-bottom:20px">
+                    <p:panelGrid columns="4" style="display:inline-block;" layout="grid">
+                        <p:outputLabel for="libro" value="Libro" />
+                        <p:selectOneMenu id="libro" value="#{REFERENCIASBean.libro}" style="width:100%">
+                            <f:selectItem itemLabel="BCOL" itemValue="BCOL" />
+                            <f:selectItem itemLabel="BCOLNIF" itemValue="BCOLNIF" />
+                        </p:selectOneMenu>
+                        
+                        <p:outputLabel for="ano" value="Año: " />
+                        <p:inputText id="ano" placeholder="Ejemplo: 2019"
+                                     required="true" value="#{REFERENCIASBean.anio}">
+                        </p:inputText>
+                        
+                        <p:outputLabel for="periodo" value="Periodo:" />
+                        <p:selectOneMenu id="periodo" value="#{REFERENCIASBean.periodo}" style="width:100%">
+                            <f:selectItem itemLabel="Seleccione..." itemValue="" />
+                            <f:selectItem itemLabel="Enero" itemValue="1" />
+                            <f:selectItem itemLabel="Febrero" itemValue="2" />
+                            <f:selectItem itemLabel="Marzo" itemValue="3" />
+                            <f:selectItem itemLabel="Abril" itemValue="4" />
+                            <f:selectItem itemLabel="Mayo" itemValue="5" />
+                            <f:selectItem itemLabel="Junio" itemValue="6" />
+                            <f:selectItem itemLabel="Julio" itemValue="7" />
+                            <f:selectItem itemLabel="Agosto" itemValue="8" />
+                            <f:selectItem itemLabel="Septiembre" itemValue="9" />
+                            <f:selectItem itemLabel="Octubre" itemValue="10" />
+                            <f:selectItem itemLabel="Noviembre" itemValue="11" />
+                            <f:selectItem itemLabel="Diciembre" itemValue="12" />
+                        </p:selectOneMenu>
+                        
+                        <p:outputLabel for="comprobante" value="Comprobante: " />
+                        <p:inputText id="comprobante" placeholder="Ejemplo: CP0000001"
+                                     required="true" value="#{REFERENCIASBean.nroComprobante}">
+                        </p:inputText>
+                    </p:panelGrid>
+                </p:fieldset>
+                
+                <p:commandButton value="Consultar" id="btn_list"
+                                 action="#{REFERENCIASBean.onFilterRows()}"
+                                 style="margin-right:20px;" icon="fa fa-send" update="form_listado :form_listado:REFERENCIASIMPUESTOS"/>
+            </p:panel>
+
+        </h:form>
+        
+        <br /><br />
+
+        <h:form id="form_listado">
+            <p:panel>
+                <p:fieldset legend="Referencias de Impuestos Filtrados" style="margin-bottom:20px">
+                    
+                    <p:dataTable id="REFERENCIASIMPUESTOS"  value="#{REFERENCIASBean.listaReferencias}" 
+                        var="referenciasimpuestos"
+                        editable="true" paginator="true" rows="10"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="5,10,50" style="margin-bottom:20px">
+                        
+                        <p:column >
+                            <p:selectBooleanCheckbox value="#{REFERENCIASBean.checked[referenciasimpuestos]}" label="Basic"/>
+                        </p:column>
+                        
+                        <p:column headerText="Ledger">
+                            <h:outputText value="#{referenciasimpuestos.ledger}" />
+                        </p:column>
+
+                        <p:column headerText="Libro">
+                            <h:outputText value="#{referenciasimpuestos.libro}" />
+                        </p:column>
+
+                        <p:column headerText="Año">
+                            <h:outputText value="#{referenciasimpuestos.ano}" />
+                        </p:column>
+
+                        <p:column headerText="Periodo">
+                            <h:outputText value="#{referenciasimpuestos.periodo}" />
+                        </p:column>
+
+                        <p:column headerText="Comprobante">
+                            <h:outputText value="#{referenciasimpuestos.comprobante}" />
+                        </p:column>
+
+                        <p:column headerText="Linea">
+                            <h:outputText value="#{referenciasimpuestos.linea}" />
+                        </p:column>
+
+                        <p:column headerText="Compañía">
+                            <h:outputText value="#{referenciasimpuestos.compania}" />
+                        </p:column>
+
+                        <p:column headerText="Cuenta">
+                            <h:outputText value="#{referenciasimpuestos.cuenta}" />
+                        </p:column>
+
+                        <p:column headerText="Cto Costo">
+                            <h:outputText value="#{referenciasimpuestos.cto_costo}" />
+                        </p:column>
+
+                        <p:column headerText="Area">
+                            <h:outputText value="#{referenciasimpuestos.area}" />
+                        </p:column>
+
+                        <p:column headerText="Tercero">
+                            <h:outputText value="#{referenciasimpuestos.tercero}" />
+                        </p:column>
+
+                        <p:column headerText="Documento">
+                            <h:outputText value="#{referenciasimpuestos.documento}" />
+                        </p:column>
+
+                        <p:column headerText="Ref1">
+                            <h:outputText value="#{referenciasimpuestos.ref1}" />
+                        </p:column>
+
+                        <p:column headerText="Ref2">
+                            <h:outputText value="#{referenciasimpuestos.ref2}" />
+                        </p:column>
+
+                        <p:column headerText="Fecha">
+                            <h:outputText value="#{referenciasimpuestos.fecha}" />
+                        </p:column>
+                    </p:dataTable>
+                    
+                    <br />
+                    <p:fieldset legend="Actualizar Registros Seleccionados de la Tabla" style="margin-bottom:20px">
+                        <p:panelGrid columns="6" style="display:inline-block;" layout="grid">
+                            <p:outputLabel for="documentoUpdate" value="Documento" />
+                            <p:inputText id="documentoUpdate" value="#{REFERENCIASBean.documentoUpdate}" style="width:96%"/>
+
+                            <p:outputLabel for="ref1Update" value="Referencia 1" />
+                            <p:inputText id="ref1Update" value="#{REFERENCIASBean.ref1Update}" style="width:96%"/>
+
+                            <p:outputLabel for="ref2Update" value="Referencia 2" />
+                            <p:inputText id="ref2Update" value="#{REFERENCIASBean.ref2Update}" style="width:96%"/>
+                        </p:panelGrid>
+                        
+                        <p:commandButton value="Actualizar" id="btn_save"
+                                action="#{REFERENCIASBean.onUpdated}"
+                                style="margin-right:20px;" icon="fa fa-save" update=":form_listado:REFERENCIASIMPUESTOS :form_send_real:msgs"/>
+                    
+                    </p:fieldset>
+                    
+                </p:fieldset>
+            </p:panel>
+        </h:form>
+        
+    </ui:define>
+</ui:composition>

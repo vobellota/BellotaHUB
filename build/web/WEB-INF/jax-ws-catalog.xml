@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://soap.bellota.co:82/Bodega/Bodega.svc?wsdl" uri="wsdl/soap.bellota.co_82/Bodega/Bodega.svc.wsdl"/>
+    <system systemId="http://soap.bellota.co:82/Bodega/Bodega.svc?xsd=xsd0" uri="wsdl/soap.bellota.co_82/Bodega/Bodega.svc.xsd_xsd0.xsd"/>
+    <system systemId="http://soap.bellota.co:82/Bodega/Bodega.svc?xsd=xsd1" uri="wsdl/soap.bellota.co_82/Bodega/Bodega.svc.xsd_xsd1.xsd"/>
+    <system systemId="http://soap.bellota.co:82/Bodega/Bodega.svc?xsd=xsd2" uri="wsdl/soap.bellota.co_82/Bodega/Bodega.svc.xsd_xsd2.xsd"/>
+    <system systemId="http://soap.bellota.co:82/Bodega/Bodega.svc?wsdl=wsdl0" uri="wsdl/soap.bellota.co_82/Bodega/Bodega.svc.wsdl_wsdl0.wsdl"/>
+    <system systemId="http://192.168.40.14:8083/Bodega.svc?wsdl" uri="wsdl/192.168.40.14_8083/Bodega.svc.wsdl"/>
+    <system systemId="http://192.168.40.14:8083/Bodega.svc?xsd=xsd0" uri="wsdl/192.168.40.14_8083/Bodega.svc.xsd_xsd0.xsd"/>
+    <system systemId="http://192.168.40.14:8083/Bodega.svc?xsd=xsd1" uri="wsdl/192.168.40.14_8083/Bodega.svc.xsd_xsd1.xsd"/>
+    <system systemId="http://192.168.40.14:8083/Bodega.svc?xsd=xsd2" uri="wsdl/192.168.40.14_8083/Bodega.svc.xsd_xsd2.xsd"/>
+    <system systemId="http://192.168.40.14:8083/Bodega.svc?wsdl=wsdl0" uri="wsdl/192.168.40.14_8083/Bodega.svc.wsdl_wsdl0.wsdl"/>
+</catalog>

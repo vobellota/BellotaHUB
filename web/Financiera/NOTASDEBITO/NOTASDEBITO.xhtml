@@ -1,0 +1,119 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Mantenimiento de Notas Débito</ui:define>
+    <ui:define name="viewname">
+        <li>Financiera</li>
+        <li>/</li>
+        <li><p:link outcome="/Financiera/NOTASDEBITO/NOTASDEBITO">Notas Débito</p:link></li>
+    </ui:define>
+    
+    <ui:define name="content">
+        
+        <!--Escript para descargar el doc de manual de usuario-->
+        <!--*************************************-->
+        <h:form>   
+            <p:commandButton value="Manual de Uso" ajax="false" icon="fa fa-arrow-down">
+                <p:fileDownload value="#{NOTASDEBITOBean.fileNOTASDEBITO}" />
+            </p:commandButton>      
+        </h:form>
+        <!--*************************************-->
+        
+        <br/><br/>
+        
+        <h:form id="formulario">
+            <p:growl id="msgs" showDetail="true"/>
+            
+            <!--** Datatable, conversion, arreglo y variable para hacer "foreach" **-->
+            
+            <p:dataTable id="NOTASDEBITO"  value="#{NOTASDEBITOBean.listaCuentas}" 
+                         emptyMessage="No se encontraron Registros" 
+                         filteredValue="#{NOTASDEBITOBean.filteredListaCuentas}"
+                         var="notasdebito" editable="true" widgetVar="NOTASDEBITOTable"
+                         paginator="true"
+                         rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+                
+                <!--** Breadcrumb **-->
+                
+                <f:facet name="header">
+                    Lista de Notas Débito
+                </f:facet>
+                
+                <!--** Eventos AJAX asociados a la tabla **-->
+                
+                <p:ajax event="rowEdit" listener="#{NOTASDEBITOBean.onRowEdit}" update=":formulario:msgs" />
+                <p:ajax event="rowEditCancel" listener="#{NOTASDEBITOBean.onRowCancel}" update=":formulario:msgs" />
+                
+                <!--** Columnas de la tabla **-->
+                
+                <p:column headerText="Numero Cliente" filterBy="#{notasdebito.rcust}" sortBy="#{notasdebito.rcust}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{notasdebito.rcust}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{notasdebito.rcust}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Prefijo de Factura" filterBy="#{notasdebito.ardpfx}" sortBy="#{notasdebito.ardpfx}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{notasdebito.ardpfx}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{notasdebito.ardpfx}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Numero de Factura" filterBy="#{notasdebito.rinvc}" sortBy="#{notasdebito.rinvc}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{notasdebito.rinvc}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{notasdebito.rinvc}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Valor de Factura">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{notasdebito.ramt}">
+                                <f:convertNumber pattern="#0.00" locale="es"/>
+                            </h:outputText>
+                        </f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{notasdebito.ramt}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Fecha de la Factura" filterBy="#{notasdebito.ridte}" sortBy="#{notasdebito.ridte}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{notasdebito.ridte}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{notasdebito.ridte}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Fecha de la Vencimiento" filterBy="#{notasdebito.rddte}" sortBy="#{notasdebito.rddte}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{notasdebito.rddte}" /></f:facet>
+                        <f:facet name="input">
+                            <!--<p:inputText id="fechaVenFacInput" value="{notasdebito.rddte}" style="width:96%"/>-->
+                            <p:calendar placeholder="30/01/2019"
+                                id="fechaVenFacInput"
+                                navigator="true"
+                                value="#{NOTASDEBITOBean.fechaVenc}"
+                                locale="es"
+                                required="true"
+                                pattern="yyyy-MM-dd"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <!--** Iconos al final de las comunas **-->
+                <!--*********************************-->
+                <p:column style="width:35px">
+                    <p:rowEditor />
+                </p:column>
+                
+            </p:dataTable>    
+        </h:form>
+    </ui:define>
+</ui:composition>

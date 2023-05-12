@@ -1,0 +1,134 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Unidades de Empaque</ui:define>
+    <ui:define name="viewname">
+        <li>Distribucion</li>
+        <li>/</li>
+        <li><p:link outcome="/Distribucion/ListasDeEmpaque/UnidadesEmpaque">Unidades de Empaque</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="alerta_div" rendered="#{UnidadesEmpaqueBean.alarmable != 0}">
+            <p:commandButton class="icon_alerta_div" icon="fa fa-warning"/>
+            <p:inputText class="maximoCajasAgruparInput" value="#{UnidadesEmpaqueBean.cadenaAlarma}" style="width:96%" readonly="true"/>
+            <p:commandButton class="icon_alerta_div_close" icon="fa fa-times" onclick="btnAlerta(event)" type="button"/>
+            <p:dataList value="#{UnidadesEmpaqueBean.listaUnidadesSinParame}" var="listUnitites" class="datalist">
+                #{listUnitites}
+            </p:dataList>
+        </h:form>
+        <br/>
+        <br/>
+        <!--Sincronizacion te de ITEMS y UNIDADES DE EMPAQUE-->
+        <!--************************************************-->
+
+        <h:form>
+            <p:messages id="messages" showDetail="true" closable="true">
+                <p:autoUpdate />
+            </p:messages>
+            <p:commandButton value="Sincronizar Items" id="btn_sincronizar"
+                             action="#{ProductosCompatiblesBean.inSynchronizingItems}"
+                             style="margin-right:20px;"/>
+        </h:form>
+
+        <h:form>
+            <p:commandButton value="Sincronizar Unidades de Empaque" id="btn_sincronizar_unidades"
+                             action="#{ProductosCompatiblesBean.inSynchronizingUnits}"
+                             style="margin-right:20px;"/>
+        </h:form>
+        <h:form id="formulario">
+            <p:growl id="msgs" showDetail="true"/>
+            <!--** Datatable, conversion, arreglo y variable para hacer "foreach" **-->
+
+            <p:dataTable id="UNIDADESEMPAQUE"  value="#{UnidadesEmpaqueBean.listaUnidadesEmpaque}" 
+                         var="unidadesdeempaque" editable="true"
+                         paginator="true" rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+
+                <!--** Breadcrumb **-->
+                <f:facet name="header">
+                    Unidades de Empaque
+                </f:facet>
+
+                <!--** Eventos AJAX asociados a la tabla **-->
+
+                <p:ajax event="rowEdit" listener="#{UnidadesEmpaqueBean.onRowEdit}" update=":formulario:msgs"></p:ajax>
+                <p:ajax event="rowEditCancel" listener="#{UnidadesEmpaqueBean.onRowCancel}" update=":formulario:msgs"></p:ajax>
+
+                <!--** Columnas de la tabla **-->
+
+                <p:column headerText="Identificador">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{unidadesdeempaque.idUnidadEmpaque}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="idUnidadInput" value="#{unidadesdeempaque.idUnidadEmpaque}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Cantidad">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{unidadesdeempaque.cantidad}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="cantidadInput" value="#{unidadesdeempaque.cantidad}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Descripcion" filterBy="#{unidadesdeempaque.descripcion}" sortBy="#{unidadesdeempaque.descripcion}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{unidadesdeempaque.descripcion}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="descripcionInput" value="#{unidadesdeempaque.descripcion}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Cantidad descrita">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{unidadesdeempaque.cantidadDescrita}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="cantidadDescritaInput" value="#{unidadesdeempaque.cantidadDescrita}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Codigo del Producto" filterBy="#{unidadesdeempaque.codigoProducto}" sortBy="#{unidadesdeempaque.codigoProducto}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{unidadesdeempaque.codigoProducto}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{unidadesdeempaque.codigoProducto}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Grupo de Compatibilidad"  filterBy="#{unidadesdeempaque.idGrupoCompatible}" sortBy="#{productoscompatibles.idGrupoCompatible}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{unidadesdeempaque.idGrupoCompatible}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu  value="#{unidadesdeempaque.idGrupoCompatible}" 
+                                              converter="converterGruposCompMenu" validatorMessage="lpc">
+                                <f:selectItems value="#{UnidadesEmpaqueBean.listaGruposCompatibles}" var="grupo" 
+                                               itemValue="#{grupo}" itemLabel="#{grupo.descripcion}"/>
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Estiba Asignada" filterBy="#{unidadesdeempaque.idEstibaAsignada}" sortBy="#{unidadesdeempaque.idEstibaAsignada}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{unidadesdeempaque.idEstibaAsignada}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu value="#{unidadesdeempaque.idEstibaAsignada}" 
+                                             converter="converterEstibasAsignadasMenu" validatorMessage="lpc">
+                                <f:selectItems value="#{UnidadesEmpaqueBean.listaEstibasAsignadas}" var="estiba" 
+                                               itemValue="#{estiba}" itemLabel="#{estiba.descripcionEstiba}"/>
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <!--** Iconos al final de las comunas **-->
+
+                <p:column style="width:35px;">
+                    <p:rowEditor />
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

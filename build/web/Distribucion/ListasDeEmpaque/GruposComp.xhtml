@@ -1,0 +1,307 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Grupos Compatibles</ui:define>
+    <ui:define name="viewname">
+        <li>Distribucion</li>
+        <li>/</li>
+        <li><p:link outcome="/Distribucion/ListasDeEmpaque/GruposComp">Grupos Compatibles</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="alerta_div" rendered="#{GruposCompatiblesBean.alarmable != 0}">
+            <p:commandButton class="icon_alerta_div" icon="fa fa-warning"/>
+            <p:inputText class="maximoCajasAgruparInput" value="#{GruposCompatiblesBean.cadenaAlarma}" style="width:96%" readonly="true"/>
+            <p:commandButton class="icon_alerta_div_close" icon="fa fa-times" onclick="btnAlerta(event)" type="button"/>
+            <p:dataList value="#{GruposCompatiblesBean.listaUnidadesSinParame}" var="listUnitites" class="datalist">
+                #{listUnitites}
+            </p:dataList>
+        </h:form>
+        <br/>
+        <h:form id="formulario">
+            <p:growl id="msgs" showDetail="true"/>
+            
+            <!--** Datatable, conversion, arreglo y variable para hacer "foreach" **-->
+
+            <p:dataTable id="GRUPOSCOMPATIBLES"  value="#{GruposCompatiblesBean.listaGruposCompatibles}" 
+                         var="gruposcompatibles"
+                         reflow="true"
+                         editable="true"  
+                         paginator="true"
+                         rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+
+                <!--** Breadcrumb **-->
+
+                <f:facet name="header">
+                    Grupos Compatibles
+                </f:facet>
+
+                <!--** Eventos AJAX asociados a la tabla **-->
+
+                <p:ajax event="rowEdit" listener="#{GruposCompatiblesBean.onRowEdit}" update=":formulario:msgs"></p:ajax>
+                <p:ajax event="rowEditCancel" listener="#{GruposCompatiblesBean.onRowCancel}" update=":formulario:msgs"></p:ajax>
+
+                <!--** Columnas de la tabla **-->
+
+                <p:column headerText="Codigo Grupo" filterBy="#{gruposcompatibles.codigoGrupo}" sortBy="#{gruposcompatibles.codigoGrupo}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.codigoGrupo}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="codigoInput" value="#{gruposcompatibles.codigoGrupo}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Descripcion" filterBy="#{gruposcompatibles.descripcion}" sortBy="#{gruposcompatibles.descripcion}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.descripcion}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="descripcionInput" value="#{gruposcompatibles.descripcion}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Permite Agrupar Referencias" filterBy="#{gruposcompatibles.permiteAgruparReferencias}" sortBy="#{gruposcompatibles.permiteAgruparReferencias}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.permiteAgruparReferencias}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="permiteAgruparreferencias" value="#{gruposcompatibles.permiteAgruparReferencias}" style="width:100%">
+                                <f:selectItem itemLabel="Selecione..." itemValue="" />
+                                <f:selectItem itemLabel="Si" itemValue="Si" />
+                                <f:selectItem itemLabel="No" itemValue="No" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Metodo Calculo" filterBy="#{gruposcompatibles.metodoCalculo}" sortBy="#{gruposcompatibles.metodoCalculo}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.metodoCalculo}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="metodoCalculoInput" value="#{gruposcompatibles.metodoCalculo}" style="width:100%">
+                                <f:selectItem itemLabel="Selecione..." itemValue="" />
+                                <f:selectItem itemLabel="Por Cajas" itemValue="Por Cajas" />
+                                <f:selectItem itemLabel="Factor Peso Volumen" itemValue="Factor Peso Volumen" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Maximo Cajas Agrupar" sortBy="#{gruposcompatibles.maximoCajasAgrupar}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.maximoCajasAgrupar}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="maximoCajasAgruparInput" value="#{gruposcompatibles.maximoCajasAgrupar}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Peso Maximo Lio" sortBy="#{gruposcompatibles.pesoMaximoLio}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.pesoMaximoLio}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="pesoMaximoLioInput" value="#{gruposcompatibles.pesoMaximoLio}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Ancho">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.ancho}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="anchoInput" value="#{gruposcompatibles.ancho}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Alto">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.alto}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="altoInput" value="#{gruposcompatibles.alto}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Largo">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.largo}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="largoInput" value="#{gruposcompatibles.largo}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Factor Peso Volumen" sortBy="#{gruposcompatibles.factorPesoVolumen}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.factorPesoVolumen}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="factorPesoVolumenInput" value="#{gruposcompatibles.factorPesoVolumen}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Estado del Grupo" filterBy="#{gruposcompatibles.estadoGruposCompatibles}" sortBy="#{gruposcompatibles.estadoGruposCompatibles}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{gruposcompatibles.estadoGruposCompatibles}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="estadoGrupoInput" value="#{gruposcompatibles.estadoGruposCompatibles}" style="width:100%">
+                                <f:selectItem itemLabel="Selecione..." itemValue="" />
+                                <f:selectItem itemLabel="Activo" itemValue="Activo" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="Inactivo" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <!--** Iconos al final de las comunas **-->
+
+                <p:column style="width:35px;">
+                    <p:rowEditor />
+                </p:column>
+
+                <!--Eliminar registro boton que diaspara modal y manda los parametros-->
+                <!--*********************************-->
+                <p:column style="width:60px;">
+                    <p:commandButton oncomplete="PF('dialogDelete').show()" icon="fa fa-trash" title="Borrar Registro">
+                        <f:setPropertyActionListener value="#{gruposcompatibles}" target="#{GruposCompatiblesBean.selectedGruposCompRow}" />
+                    </p:commandButton>
+                </p:column>
+
+            </p:dataTable>
+            
+            <!-- Boton de la Modal del Formulario de agregar-->
+            <!--********************************************-->
+            <h:panelGrid columns="1" cellpadding="5">
+                <p:commandButton value="Crear" type="button" onclick="PF('dialogAdd').show();" /> 
+            </h:panelGrid>
+        </h:form>
+        
+        <!--Modal del Formulario de Eliminar-->
+        <!--*********************************-->
+        <h:form>
+            
+            <p:dialog header="Eliminar Registro" widgetVar="dialogDelete" 
+                      modal="true" showEffect="fade" hideEffect="fade" 
+                      resizable="false" id="modal_deleted">
+                <p:outputPanel id="deleteDetail">
+                    <p:outputLabel value="¿Desea eliminar este registro?" />
+                    <br /><br />
+                    <p:commandButton value="No" type="button" onclick="PF('dialogDelete').hide();" icon="fa fa-close" style="margin-left:10px; float:right !important;"/>
+                    <p:commandButton value="Si" id="btn_modal_delete"
+                                     action="#{GruposCompatiblesBean.onDeletedAcepted}" update=":formulario:GRUPOSCOMPATIBLES,:formulario:msgs" 
+                                     icon="fa fa-check" oncomplete="PF('dialogDelete').hide();" style="float:right !important;"/>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
+        
+        <!--Modal del Formulario de Agregar-->
+        <!--*********************************-->
+        <h:form id="form_save">
+            
+            <p:dialog header="Modal" widgetVar="dialogAdd" modal="true">
+                <p:panel id="output">
+                    <p:panelGrid columns="3">
+                        <p:outputLabel for="metodoDeCalculo" value="Metodo de Calculo:"/>
+                        <p:selectOneMenu id="metodoDeCalculo" value="#{GruposCompatiblesBean.nuevosGruposCompatibles.metodoCalculo}" style="width:100%" required="true">
+                            <f:selectItem itemLabel="Selecione..." itemValue="" />
+                            <f:selectItem itemLabel="Por Cajas" itemValue="Por Cajas" />
+                            <f:selectItem itemLabel="Factor Peso Volumen" itemValue="Factor Peso Volumen" />
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{GruposCompatiblesBean.onChangeSelect}" update="output"/>
+                            <!--****************************-->
+                        </p:selectOneMenu>
+                        <p:message for="metodoDeCalculo" />
+                        
+                        <p:outputLabel for="codGrupo" value="Codigo del Grupo:" />
+                        <p:inputText placeholder="Codigo del Grupo"
+                                     id="codGrupo"
+                                     required="true"
+                                     value="#{GruposCompatiblesBean.nuevosGruposCompatibles.codigoGrupo}">
+                            <f:validateRequired />
+                        </p:inputText>
+                        <p:message for="codGrupo" />
+                        
+                        <p:outputLabel for="descripcion" value="Descripcion: " />
+                        <p:inputText placeholder="Descripcion"
+                                     id="descripcion"
+                                     value="#{GruposCompatiblesBean.nuevosGruposCompatibles.descripcion}"/>
+                        <p:message for="descripcion" />
+                        
+                        <p:outputLabel for="permiteAgruparreferencias" value="Permite Agrupar Referencias:" />
+                        <p:selectOneMenu id="permiteAgruparreferencias" value="#{GruposCompatiblesBean.nuevosGruposCompatibles.permiteAgruparReferencias}" style="width:100%" required="true">
+                            <f:selectItem itemLabel="Selecione..." itemValue="" />
+                            <f:selectItem itemLabel="Si" itemValue="Si" />
+                            <f:selectItem itemLabel="No" itemValue="No" />
+                        </p:selectOneMenu>
+                        <p:message for="permiteAgruparreferencias" />
+                        
+                        <p:outputLabel for="maximoCajasAgrupar" value="Maximo Cajas Agrupar:" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Por Cajas'}"/>
+                        <p:inputText placeholder="Maximo Cajas Agrupar"
+                                    id="maximoCajasAgrupar"
+                                    rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Por Cajas'}"
+                                    value="#{GruposCompatiblesBean.nuevosGruposCompatibles.maximoCajasAgrupar}"/>
+                        <p:message for="maximoCajasAgrupar" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Por Cajas'}"/>
+                        
+                        <p:outputLabel for="pesoMaximoLio" value="Peso Maximo Lio:" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}" />
+                        <p:inputText placeholder="Peso Maximo Lio"
+                                     id="pesoMaximoLio"
+                                     value="#{GruposCompatiblesBean.nuevosGruposCompatibles.pesoMaximoLio}"
+                                     rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{GruposCompatiblesBean.pesoTempVar}"/>
+                            <!--****************************-->
+                        </p:inputText>
+                        <p:message for="pesoMaximoLio" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}"/>
+                        
+                        <p:outputLabel for="ancho" value="Ancho: " rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}"/>
+                        <p:inputText placeholder="Ancho"
+                                     id="ancho"
+                                     value="#{GruposCompatiblesBean.nuevosGruposCompatibles.ancho}"
+                                     rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{GruposCompatiblesBean.anchoTempVar}"/>
+                            <!--****************************-->
+                        </p:inputText>
+                        <p:message for="ancho" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}"/>
+                        
+                        <p:outputLabel for="alto" value="Alto:" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}" />
+                        <p:inputText placeholder="Alto"
+                                     id="alto"
+                                     value="#{GruposCompatiblesBean.nuevosGruposCompatibles.alto}"
+                                     rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{GruposCompatiblesBean.altoTempVar}"/>
+                            <!--****************************-->
+                        </p:inputText>
+                        <p:message for="alto" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}"/>
+                        
+                        <p:outputLabel for="largo" value="Largo:" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}" />
+                        <p:inputText placeholder="Largo"
+                                     id="largo"
+                                     value="#{GruposCompatiblesBean.nuevosGruposCompatibles.largo}"
+                                     rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}">
+
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{GruposCompatiblesBean.largoTempVar}" update="form_save:factorPesoVolumen"/>
+                            <!--****************************-->
+                        </p:inputText>
+                        <p:message for="largo" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}"/>
+                        
+                        <p:outputLabel for="factorPesoVolumen" value="Factor Peso Volumen:" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}" />
+                        <p:inputText placeholder="Factor Peso Volumen"
+                                     id="factorPesoVolumen"
+                                     readonly="true"
+                                     value="#{GruposCompatiblesBean.resultadoTemp}"
+                                     rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}"/>
+                        <p:message for="largo" rendered="#{GruposCompatiblesBean.mostrarDimensiones eq 'Factor Peso Volumen'}"/>
+                    </p:panelGrid>
+                    <br/>
+                    <p:commandButton value="Guardar" id="btn_puc_save"
+                                     action="#{GruposCompatiblesBean.onStoring}" update=":formulario:GRUPOSCOMPATIBLES,:formulario:msgs,output"
+                                     style="margin-right:20px;" icon="fa fa-send" 
+                                     oncomplete="handleSubmit(args,'dialogAdd');"/>
+                    
+                    <p:commandButton onclick="dialogAdd.hide()" id="hidden_button_close" style="display:none !important;"/>
+                </p:panel>
+            </p:dialog>
+
+        </h:form>
+        
+    </ui:define>
+</ui:composition>

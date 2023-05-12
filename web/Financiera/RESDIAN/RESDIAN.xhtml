@@ -1,0 +1,248 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Resdian</ui:define>
+    <ui:define name="viewname">
+        <li>Financiera</li>
+        <li>/</li>
+        <li><p:link outcome="/Financiera/RESDIAN/RESDIAN">RESDIAN</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        
+        <!--Escript para descargar el doc de manual de usuario-->
+        <!--*************************************-->
+        <h:form>   
+            <p:commandButton value="Manual de Uso" ajax="false" icon="fa fa-arrow-down">
+                <p:fileDownload value="#{RESDIANBean.fileRESDIAN}" />
+            </p:commandButton>      
+        </h:form>
+        <!--*************************************-->
+        
+        <br/><br/>
+        
+        <h:form id="formulario">
+            <p:growl id="msgs" showDetail="true"/>
+
+            <!--** Datatable, conversion, arreglo y variable para hacer "foreach" **-->
+
+            <p:dataTable id="RESDIAN"  value="#{RESDIANBean.resdianLista}"
+                         emptyMessage="No se encontraron Registros" 
+                         filteredValue="#{RESDIANBean.filteredresdianLista}"
+                         var="resdian" editable="true" widgetVar="resdianTable"
+                         paginator="true" rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+
+                <!--** Breadcrumb **-->
+                <f:facet name="header">
+                    Resdian
+                </f:facet>
+
+                <!--** Eventos AJAX asociados a la tabla **-->
+
+                <p:ajax event="rowEdit" listener="#{RESDIANBean.onRowEdit}" update=":formulario:msgs"></p:ajax>
+                <p:ajax event="rowEditCancel" listener="#{RESDIANBean.onRowCancel}" update=":formulario:msgs"></p:ajax>
+
+                <!--** Columnas de la tabla **-->
+
+                <p:column headerText="Resolucion" filterBy="#{resdian.resolucion}" sortBy="#{resdian.resolucion}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{resdian.resolucion}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <h:outputText id="resolucionInput" class="output_without_styles" value="#{resdian.resolucion}"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Prefijo" filterBy="#{resdian.prefijo}" sortBy="#{resdian.prefijo}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{resdian.prefijo}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="prefijoInput" value="#{resdian.prefijo}" style="width:100%">
+                                <f:selectItem itemLabel="CN" itemValue="CN" />
+                                <f:selectItem itemLabel="CD" itemValue="CD" />
+                                <f:selectItem itemLabel="VE" itemValue="VE" />
+                                <f:selectItem itemLabel="CE" itemValue="CE" />
+                                <f:selectItem itemLabel="CV" itemValue="CV" />
+                                <f:selectItem itemLabel="CI" itemValue="CI" />
+                                <f:selectItem itemLabel="VC" itemValue="VC" />
+                                </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Numero Inicial" filterBy="#{resdian.n_inicial}" sortBy="#{resdian.n_inicial}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{resdian.n_inicial}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="nInicialInput" value="#{resdian.n_inicial}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Numero Final" filterBy="#{resdian.n_final}" sortBy="#{resdian.n_final}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{resdian.n_final}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="nFinalInput" value="#{resdian.n_final}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Fecha Inicio" filterBy="#{resdian.fech_ini}" sortBy="#{resdian.fech_ini}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{resdian.fech_ini}" /></f:facet>
+                        <f:facet name="input">
+                            <p:inputText id="fInicioInput" value="#{resdian.fech_ini}" style="width:96%"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Fecha Vencimiento" filterBy="#{resdian.fech_venc}" sortBy="#{resdian.fech_venc}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{resdian.fech_venc}" /></f:facet>
+                        <f:facet name="input">
+                            <h:outputText id="fVencimientoInput" class="output_without_styles" value="#{resdian.fech_venc}" />
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <!--** Iconos al final de las comunas **-->
+                <!--*********************************-->
+                <p:column style="width:35px;">
+                    <p:rowEditor />
+                </p:column>
+                
+                <!--Eliminar registro boton que diaspara modal y manda los parametros-->
+                <!--*********************************-->
+                <p:column headerText="Acciones">
+                    <p:commandButton oncomplete="PF('resdianDialog').show()" icon="fa fa-trash" title="View" >
+                        <f:setPropertyActionListener value="#{resdian}" target="#{RESDIANBean.selectedResdianRow}" />
+                    </p:commandButton>
+                </p:column>   
+                
+            </p:dataTable>
+            
+            <!-- Boton de la Modal del Formulario -->
+            <!--*********************************-->
+            <h:panelGrid columns="1" cellpadding="5">
+                <p:commandButton value="Crear" type="button" onclick="PF('dlgRESDIAN').show();" /> 
+            </h:panelGrid>
+        </h:form>
+            
+        <!--Modal del Formulario de Eliminar-->
+        <!--*********************************-->
+        <h:form>
+            <p:dialog header="Eliminar Registro" widgetVar="resdianDialog" 
+                      modal="true" showEffect="fade" hideEffect="fade" 
+                      resizable="false" id="modal_deleted">
+                <p:outputPanel id="deleteDetail">
+                    <p:outputLabel value="¿Desea eliminar este registro?" />
+                    <br /><br />
+                    <p:commandButton value="No" type="button" onclick="PF('resdianDialog').hide();" icon="fa fa-close" style="margin-left:10px; float:right !important;"/>
+                    <p:commandButton value="Si" id="btn_modal_delete"
+                             action="#{RESDIANBean.onDeletedAcepted}" update=":formulario:msgs" 
+                             icon="fa fa-check" oncomplete="PF('resdianDialog').hide();" style="float:right !important;"/>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
+            
+        <!-- Modal del Formulario de guardar -->
+        <!--*********************************-->
+        <h:form id="form_save">
+            <p:dialog header="Resdian" widgetVar="dlgRESDIAN" modal="true">
+                <p:panel id="output">
+                    <p:panelGrid columns="3">
+                        <p:outputLabel for="nroform" value="Numero de Formulario: " />
+                        <p:inputText placeholder="Numero de Formulario"
+                                     id="nroform"
+                                     required="true"
+                                     value="#{RESDIANBean.resolucionTmp}">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{RESDIANBean.onChangeNroform}" update=":form_save:output"/>
+                            <!--****************************-->
+                        </p:inputText>
+                        <p:message for="nroform" />
+
+                        <p:outputLabel for="nroform2" value="Fecha Inicial: " />
+                        <p:calendar placeholder="Fecha"
+                                    id="nroform2"
+                                    value="#{RESDIANBean.fechaInicial}"
+                                    navigator="true"
+                                    locale="es"
+                                    required="true"
+                                    pattern="yyyy-MM-dd">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="dateSelect" listener="#{RESDIANBean.onChangeDateOne}" update=":form_save:nroform3"/>
+                            <!--****************************-->
+                        </p:calendar>
+                        <p:message for="nroform2" />
+
+                        <p:outputLabel for="nroform3" value="Fecha Vencimiento: " />
+                        <p:calendar placeholder="Fecha de Vencimiento"
+                                id="nroform3"
+                                value="#{RESDIANBean.fechaFinal}"
+                                navigator="true"
+                                locale="es"
+                                required="true"
+                                pattern="yyyy-MM-dd"/>
+                        <p:message for="nroform3" />
+                    </p:panelGrid>
+                    <br/>
+                    <p:panelGrid columns="2" id="prefijosMultiples" rendered="#{RESDIANBean.renderGrid eq 'Si'}">
+                        <p:commandButton value="Agregar" icon="fa fa-plus" action="#{RESDIANBean.agregarPrefijo}" update="output" />
+                        <p:commandButton value="Remover" icon="fa fa-minus" action="#{RESDIANBean.removerPrefijo}" update="output" style="margin-left:20px;"/>
+                        <ui:repeat var="prefijo" value="#{RESDIANBean.nuevaResdianLista}">
+
+                            <p:panelGrid columns="8">            
+                                <h:outputText value="Prefijo" />
+                                <p:selectOneMenu id="prefijo_input" value="#{prefijo.prefijo}" style="width:100%">
+                                    <f:selectItem itemLabel="CN" itemValue="CN" />
+                                    <f:selectItem itemLabel="CD" itemValue="CD" />
+                                    <f:selectItem itemLabel="VE" itemValue="VE" />
+                                    <f:selectItem itemLabel="CE" itemValue="CE" />
+                                    <f:selectItem itemLabel="CV" itemValue="CV" />
+                                    <f:selectItem itemLabel="CI" itemValue="CI" />
+                                    <f:selectItem itemLabel="VC" itemValue="VC" />
+                                </p:selectOneMenu>
+                                
+                                <h:outputText value="Numero Inicial" /> 
+                                <p:inputText placeholder="10000"
+                                             id="NumInical_input"
+                                             required="true"
+                                             value="#{prefijo.n_inicial}">
+                                </p:inputText>
+                                <p:message for="NumInical_input" />
+                                
+                                <h:outputText value="Numero Final" />
+                                <p:inputText placeholder="20000"
+                                             id="numFinal_input"
+                                             required="true"
+                                             value="#{prefijo.n_final}">
+                                </p:inputText>
+                                <p:message for="numFinal_input" />
+
+                            </p:panelGrid>
+                        </ui:repeat>
+                    </p:panelGrid>
+
+                </p:panel>
+
+                <p:commandButton value="Guardar" id="btn_puc_save"
+                             action="#{RESDIANBean.onStoring}" update=":formulario:msgs output" 
+                             style="margin-right:20px;" icon="fa fa-save"
+                             oncomplete="handleSubmit(args,'dlgRESDIAN');"/>
+                
+                <p:commandButton onclick="dlgRESDIAN.hide()" class="hidden_button_close" style="display:none !important;"/>
+            </p:dialog>
+
+        </h:form>
+    </ui:define>
+</ui:composition>

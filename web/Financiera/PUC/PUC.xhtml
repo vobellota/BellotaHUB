@@ -1,0 +1,212 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Mantenimiento Cuentas PUC</ui:define>
+    <ui:define name="viewname">
+        <li>Financiera</li>
+        <li>/</li>
+        <li><p:link outcome="/Financiera/PUC/PUC">PUC</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        
+        <!--Escript para descargar el doc de manual de usuario-->
+        <!--*************************************-->
+        <h:form>   
+            <p:commandButton value="Manual de Uso" ajax="false" icon="fa fa-arrow-down">
+                <p:fileDownload value="#{PUCBean.filePUC}" />
+            </p:commandButton>      
+        </h:form>
+        <!--*************************************-->
+        
+        <br/><br/>
+        
+        <h:form id="formulario">
+            <p:growl id="msgs" showDetail="true"/>
+            
+            <!--** Datatable, conversion, arreglo y variable para hacer "foreach" **-->
+            
+            <p:dataTable id="PUC"  value="#{PUCBean.listaCuentas}"
+                         emptyMessage="No se encontraron Registros" 
+                         filteredValue="#{PUCBean.filteredListaCuentas}"
+                         var="puc" editable="true" widgetVar="pucTable"
+                         paginator="true"
+                         rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+                
+                <!--** Breadcrumb **-->
+                
+                <f:facet name="header">
+                    Lista de cuentas PUC
+                </f:facet>
+                
+                <!--** Eventos AJAX asociados a la tabla **-->
+
+                <p:ajax event="rowEdit" listener="#{PUCBean.onRowEdit}" update=":formulario:msgs" />
+                <p:ajax event="rowEditCancel" listener="#{PUCBean.onRowCancel}" update=":formulario:msgs" />
+                
+                <!--** Columnas de la tabla **-->
+                
+                <p:column headerText="Cuenta" filterBy="#{puc.ctcta}" sortBy="#{puc.ctcta}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{puc.ctcta}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="cuentaInput" value="#{puc.ctcta}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Descripción" filterBy="#{puc.ctdesc}" sortBy="#{puc.ctdesc}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{puc.ctdesc}" /></f:facet>
+                        <f:facet name="input">
+                            <p:inputTextarea rows="6" cols="15" 
+                            placeholder="Descripcion"
+                            id="DescInput" 
+                            value="#{puc.ctdesc}" style="width:100%;"/>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Tipo" filterBy="#{puc.ctctyp}" sortBy="#{puc.ctctyp}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{puc.ctctyp}" />
+                        </f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="TipoInput" value="#{puc.ctctyp}" style="width:100%">
+                                <f:selectItem itemLabel="Vacío" itemValue=" " />
+                                <f:selectItem itemLabel="AS" itemValue="AS" />
+                                <f:selectItem itemLabel="LI" itemValue="LI" />
+                                <f:selectItem itemLabel="IC" itemValue="IC" />
+                                <f:selectItem itemLabel="EX" itemValue="EX" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Inventario" filterBy="#{puc.ctinve}" sortBy="#{puc.ctinve}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{puc.ctinve}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="InvInput" value="#{puc.ctinve}" style="width:100%">
+                                <f:selectItem itemLabel="Vacío" itemValue=" " />
+                                <f:selectItem itemLabel="I" itemValue="I" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Tercero" filterBy="#{puc.ctterc}" sortBy="#{puc.ctterc}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{puc.ctterc}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="terceroInput" value="#{puc.ctterc}" style="width:100%">
+                                <f:selectItem itemLabel="Vacío" itemValue=" " />
+                                <f:selectItem itemLabel="T" itemValue="T" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <!--** Iconos al final de las comunas **-->
+                <!--*********************************-->
+                <p:column style="width:35px">
+                    <p:rowEditor />
+                </p:column>
+                
+                <!--Eliminar registro boton que diaspara modal y manda los parametros-->
+                <!--*********************************-->
+                <p:column headerText="Acciones">
+                    <p:commandButton oncomplete="PF('pucDialog').show()" icon="fa fa-trash" title="View" >
+                        <f:setPropertyActionListener value="#{puc}" target="#{PUCBean.selectPucRow}" />
+                    </p:commandButton>
+                </p:column>   
+                
+            </p:dataTable>
+            
+            <!-- Boton de la Modal del Formulario -->
+            <h:panelGrid columns="1" cellpadding="5">
+                <p:commandButton value="Crear" type="button" onclick="PF('dlgPUC').show();" /> 
+            </h:panelGrid>
+            
+        </h:form>
+            
+        <!--Modal del Formulario de Eliminar-->
+        <!--*********************************-->
+        <h:form>
+            <p:dialog header="Eliminar Registro" widgetVar="pucDialog" 
+                      modal="true" showEffect="fade" hideEffect="fade" 
+                      resizable="false" id="modal_deleted">
+                <p:outputPanel id="deleteDetail">
+                    <p:outputLabel value="¿Desea eliminar este registro?" />
+                    <br /><br />
+                    <p:commandButton value="No" type="button" onclick="PF('pucDialog').hide();" icon="fa fa-close" style="margin-left:10px; float:right !important;"/>
+                    <p:commandButton value="Si" id="btn_modal_delete"
+                             action="#{PUCBean.onDeletedAcepted}" update=":formulario:PUC,:formulario:msgs" 
+                             icon="fa fa-check" oncomplete="PF('pucDialog').hide();" />
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
+            
+            <!--Modal del Formulario de Agregar-->
+            <!--*********************************-->
+            <h:form id="form_save">
+                <p:dialog header="Crear Cuenta" widgetVar="dlgPUC" modal="true">
+                    <p:panel id="output">
+                        <p:panelGrid columns="3">
+                            <p:outputLabel for="cuentaInputSave" value="Cuenta: " />
+                            <p:inputText placeholder="Cuenta"
+                                id="cuentaInputSave"
+                                required="true"
+                                value="#{PUCBean.nuevaCuenta.ctcta}" style="width:100%;"/>
+                            <p:message for="cuentaInputSave" />
+
+                            <p:outputLabel for="descripcionInputSave" value="Descripción: " />
+                            <p:inputTextarea rows="6" cols="33" 
+                                placeholder="Descripcion" 
+                                id="descripcionInputSave" 
+                                value="#{PUCBean.nuevaCuenta.ctdesc}" style="width:100%;"/>
+                            <p:message for="descripcionInputSave" />
+
+                            <p:outputLabel for="tipoInputSave" value="Tipo:" />
+                            <p:selectOneMenu id="tipoInputSave" value="#{PUCBean.nuevaCuenta.ctctyp}" style="width:100%">
+                                <f:selectItem itemLabel="Vacío" itemValue=" " />
+                                <f:selectItem itemLabel="AS" itemValue="AS" />
+                                <f:selectItem itemLabel="LI" itemValue="LI" />
+                                <f:selectItem itemLabel="IC" itemValue="IC" />
+                                <f:selectItem itemLabel="EX" itemValue="EX" />
+                            </p:selectOneMenu>
+                            <p:message for="tipoInputSave" />
+
+                            <p:outputLabel for="inventarioInputSave" value="Inventario:" />
+                            <p:selectOneMenu id="inventarioInputSave" value="#{PUCBean.nuevaCuenta.ctinve}" style="width:100%">
+                                <f:selectItem itemLabel="Vacío" itemValue=" " />
+                                <f:selectItem itemLabel="I" itemValue="I" />
+                            </p:selectOneMenu>
+                            <p:message for="inventarioInputSave" />
+
+                            <p:outputLabel for="terceroInputSave" value="Tercero:" />
+                            <p:selectOneMenu id="terceroInputSave" value="#{PUCBean.nuevaCuenta.ctterc}" style="width:100%">
+                                <f:selectItem itemLabel="Vacío" itemValue=" " />
+                                <f:selectItem itemLabel="T" itemValue="T" />
+                            </p:selectOneMenu>
+                            <p:message for="terceroInputSave" />
+
+                        </p:panelGrid>
+                    </p:panel>
+
+                    <p:commandButton value="Guardar" id="btn_puc_save" 
+                                action="#{PUCBean.onSelectedOne}" update=":formulario:msgs output" 
+                                style="margin-right:20px;" icon="fa fa-save" 
+                                oncomplete="handleSubmit(args,'dlgPUC');"/>
+
+                    <p:commandButton onclick="dlgPUC.hide()" class="hidden_button_close" style="display:none !important;"/>
+                </p:dialog>
+        </h:form>
+            
+    </ui:define>
+</ui:composition>

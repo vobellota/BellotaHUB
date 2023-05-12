@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ph="http://primefaces.org/harmony">
+
+    <div class="layout-sidebar">
+        <div class="nano">
+            <div class="nano-content menu-scroll-content">
+                <h:form id="menuform">
+                    <ph:menu widgetVar="me">
+                        
+                        <p:menuitem id="mInicio" value="Inicio" outcome="/index" icon="fa fa-fw fa-home"
+                                        styleClass="#{menuPrincipal.claseStyle()}" rendered="#{sesion.loggedIn}"/>
+                        
+                        <p:submenu rendered="#{menuPrincipal.permiso()}" id="menuCompras" label="Compras" icon="fa fa-fw fa fa-money">
+                             <p:menuitem id="requisiciones" value="Requisiciones" icon="fa fa-fw fa fa-shopping-cart" url="https://compras.bellota.co/compras/registro" />
+                             <p:menuitem id="legalizaciones" value="Legalizaciones" icon="fa fa-fw fa fa-credit-card" url="https://compras.bellota.co/compras/legalizacion" />
+                             <p:menuitem id="cotizar" value="Cotizaciones" icon="fa fa-fw fa fa-usd" url="https://compras.bellota.co/compras/cotizar" />
+                             <p:menuitem id="aprobacion" value="Aprobaciones" icon="fa fa-fw fa fa-thumbs-up" url="https://compras.bellota.co/compras/aprobar" />
+                             <p:menuitem id="fechasOC" value="Modificar Fechas Orden Compra" icon="fa fa-fw fa fa-ship" outcome="/Compras/OrdenCompra/ActualizarFechaRequerida" />
+                         </p:submenu>
+                        
+                        <p:submenu rendered="#{menuPrincipal.permiso()}" id="menuDistribucion" label="Distribucion" icon="fa fa-fw fa-truck">
+                            <p:menuitem id="GruposComp" value="Grupos Compatibles" icon="fa fa-fw fa-cubes" outcome="/Distribucion/ListasDeEmpaque/GruposComp" />
+                            <p:menuitem id="Estibas" value="Estibas" icon="fa fa-fw fa-dropbox" outcome="/Distribucion/ListasDeEmpaque/Estibas" />
+                            <p:menuitem id="UnidadesEmpaque" value="Unidades de Empaque" icon="fa fa-fw fa-cube" outcome="/Distribucion/ListasDeEmpaque/UnidadesEmpaque" />
+                            <p:menuitem id="ProductosComp" value="Productos" icon="fa fa-fw fa-wrench" outcome="/Distribucion/ListasDeEmpaque/ProductosComp" />
+                            <p:menuitem id="listasEmpaque" value="Listas de Empaque" icon="fa fa-file-text-o" outcome="/Distribucion/ListasDeEmpaque/ListasEmpaqueFac" />
+                        </p:submenu>
+                        
+                        <p:submenu rendered="#{menuPrincipal.permiso()}" id="menuComercioExterior" label="Comercial" icon="fa fa-fw fa-shopping-bag">
+                            <p:menuitem id="precios" value="Precios" icon="fa fa-fw fa fa-rub" outcome="/Comercial/Precios/Precios" />
+                            <p:menuitem id="CopiarListaPrecios" value="Copiar Lista Precios" icon="fa fa-fw fa-copy" outcome="/Comercial/Precios/CopiarListaPrecios" />
+                        </p:submenu>
+                        
+                        <p:submenu rendered="#{menuPrincipal.permiso()}" id="menuFinanciera" label="Financiera" icon="fa fa-fw fa fa-usd">
+                            <p:menuitem id="refImpuest" value="Referencias Impuestos" icon="fa fa-fw fa fa-usd" outcome="/Financiera/REFERENCIAS/IMPUESTOS" />
+                            <p:menuitem id="CxP" value="Tasas de Cambio" icon="fa fa-fw fa fa-usd" outcome="/Financiera/TASAS/DECAMBIO" />
+                            <p:menuitem id="PUC" value="Cuentas PUC" icon="fa fa-fw fa fa-usd" outcome="/Financiera/PUC/PUC" />
+                            <p:menuitem id="menuResDian" value="Resoluciones de Facturación" icon="fa fa-fw fa fa-usd" outcome="/Financiera/RESDIAN/RESDIAN" />
+                            <p:menuitem id="menuNotas" value="Notas Débito" icon="fa fa-fw fa fa-usd" outcome="/Financiera/NOTASDEBITO/NOTASDEBITO" />
+                        </p:submenu>
+
+                        <p:menuitem value="Cerrar Sesión" oncomplete="keycloak.logout({redirectUri :'#{sesion.URL}'})" action="#{sesion.logOut()}" icon="fa fa-fw fa-sign-out" />
+                    </ph:menu>
+                </h:form> 
+            </div>
+        </div>
+    </div>
+</ui:composition>
+
+<!--p:submenu id="om_components" label="Components" icon="fa fa-fw fa-bars">
+                           <p:menuitem id="om_sample" value="Sample Page" icon="fa fa-fw fa-columns" outcome="/sample" />
+                           <p:menuitem id="om_forms" value="Forms" icon="fa fa-fw fa-code" outcome="/forms" />
+                           <p:menuitem id="om_data" value="Data" icon="fa fa-fw fa-table" outcome="/data" />
+                           <p:menuitem id="om_panels" value="Panels" icon="fa fa-fw fa-list-alt" outcome="/panel" />
+                           <p:menuitem id="om_overlays" value="Overlays" icon="fa fa-fw fa-square" outcome="/overlay" />
+                           <p:menuitem id="om_menus" value="Menus" icon="fa fa-fw fa-minus-square-o" outcome="/menu" />
+                           <p:menuitem id="om_messages" value="Messages" icon="fa fa-fw fa-circle-o-notch" outcome="/messages" />
+                           <p:menuitem id="om_charts" value="Charts" icon="fa fa-fw fa-area-chart" outcome="/charts" />
+                           <p:menuitem id="om_file" value="File" icon="fa fa-fw fa-arrow-circle-o-up" outcome="/file" />
+                           <p:menuitem id="om_misc" value="Misc" icon="fa fa-fw fa-user-secret" outcome="/misc" />
+                       </p:submenu-->

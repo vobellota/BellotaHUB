@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      lang="en">
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title><ui:insert name="title">Proforma - Bellota Colombia S.A.S C.I</ui:insert></title>
+        <h:outputScript name="js/nanoscroller.js" library="harmony-layout" />
+        <h:outputScript name="js/layout.js" library="harmony-layout" />
+        <h:outputScript name="js/calendar_localization.js"/>
+        <ui:insert name="head"/>
+
+        <!--Recursos personalizados-->
+        <!--***********************-->
+        <h:outputStylesheet name="css/cssPersonalizado.css"/>
+        <h:outputScript name="js/jsfcrud.js"/>
+        <!--<link href="./resources/css/cssPersonalizado.css" rel="stylesheet" type="text/css" />-->
+        <!-- link href="./resources/css/cssLayout.css" rel="stylesheet" type="text/css" /-->
+        <!--        <link href="resources/bootstrap/css/bootstrapPr.css" rel="stylesheet" type="text/css" />-->
+        <link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/resources/img/favicon.ico"/>
+
+        <script src="https://apps.bellota.co:10443/auth/js/keycloak.js"></script>
+        <script>
+             var keycloak = Keycloak('#{facesContext.externalContext.requestContextPath}/keycloak.json');
+             /*{onLoad: 'check-sso',   
+                     silentCheckSsoRedirectUri: window.location.origin + '{facesContext.externalContext.requestContextPath}/silentsso.html'
+                }*/
+                keycloak.init().success(function (authenticated) {
+                 console.log(keycloak.tokenParsed.iss);
+             }).error(function () {
+                 alert('failed to initialize in template');
+             });
+
+             function salir() {
+                 keycloak.logout();
+             }
+        </script>
+    </h:head>
+
+    <h:body>
+
+
+        <div class="layout-wrapper #{guestPreferences.menuMode} #{guestPreferences.orientationRTL ? 'layout-rtl' : null}">
+            <ui:include src="./topbar.xhtml" />
+            <!--<ui:include src="./right_panel.xhtml" />-->
+            <ui:include src="./sidebar.xhtml" />
+
+            <div class="layout-main">
+                <div class="route-bar">
+                    <div class="route-bar-breadcrumb">
+                        <i class="fa fa-home"></i> <span>/ </span>
+                        <ui:insert name="viewname" />
+                    </div>
+                    <!--<ui:include src="./routebar-menu.xhtml" />-->
+                </div>
+
+                <p:outputPanel rendered="#{sesion.loggedIn}">
+                    <div class="layout-content">
+                        <ui:insert name="content" rendered="false">
+                            <h:outputScript>
+                                document.location.href='#{facesContext.externalContext.requestContextPath}/HUB/dashboard.xhtml';
+                            </h:outputScript>                             
+                        </ui:insert>
+
+                        <div id="content" class="center_contentProf">                                    
+                            <ui:insert name="contentProf">  
+
+                            </ui:insert>                
+                        </div>
+                    </div>
+                </p:outputPanel>
+
+                <f:subview id="login" rendered="#{!sesion.loggedIn}">
+                    <div class="layout-content">                                    
+                        <ui:insert name="login">No ha iniciadio sesion
+                            #{sesion.URL}
+                            <br />
+                            <a href='#{facesContext.externalContext.requestContextPath}' >Click acá para Iniciar sesión</a>
+                            <h:outputScript>
+                                //document.location.href='#{facesContext.externalContext.requestContextPath}';
+                            </h:outputScript> 
+                        </ui:insert>                
+                    </div>                    
+                </f:subview> 
+
+                <!--ui:include src="./footer.xhtml" /-->
+
+                <div class="layout-mask"></div>
+            </div>
+        </div>
+
+        <p:ajaxStatus style="width:32px;height:32px;position:fixed;right:7px;bottom:7px">
+            <f:facet name="start">
+                <i class="fa fa-2x fa-circle-o-notch fa-spin ajax-status-icon" aria-hidden="true"></i>
+            </f:facet>
+
+            <f:facet name="complete">
+                <h:outputText value="" />
+            </f:facet>
+        </p:ajaxStatus>
+
+        <h:outputStylesheet name="css/nanoscroller.css" library="harmony-layout" />
+        <h:outputStylesheet name="css/layout-#{guestPreferences.layout}.css" library="harmony-layout" />
+
+        <ui:insert name="Exceptions"> 
+            <h:form id="exceptions" >
+                <p:ajaxExceptionHandler type="javax.faces.application.ViewExpiredException"
+                                        update="exceptionDialog"
+                                        onexception="PF('exceptionDialog').show();" />
+                <p:ajaxExceptionHandler type="java.lang.Exception" onexception="PF('exceptionDialog').show();" 
+                                        update="exceptionDialog"/>
+
+                <p:dialog id="exceptionDialog" header="Se ha producido el error '#{pfExceptionHandler.type}'" widgetVar="exceptionDialog"
+                          height="500px">
+                    <h:outputFormat rendered="#{pfExceptionHandler.type != 'javax.faces.application.ViewExpiredException'}"> 
+                        Resumen: #{pfExceptionHandler.message} 
+                        <br/>
+                        Detalle técnico del error: <h:outputText value="#{pfExceptionHandler.formattedStackTrace}" escape="false" /> <br />
+                    </h:outputFormat>
+                    <h:outputFormat rendered="#{pfExceptionHandler.type == 'javax.faces.application.ViewExpiredException'}"> 
+
+                        Su sesión ha expirado. Por favor Inicie sesión de nuevo.
+                        <p:button onclick="document.location.href"
+                                  value="Reiniciar!"
+                                  rendered="#{pfExceptionHandler.type == 'javax.faces.application.ViewExpiredException'}" />
+                    </h:outputFormat>
+                </p:dialog>
+
+
+            </h:form>
+        </ui:insert>
+    </h:body>
+
+</html>

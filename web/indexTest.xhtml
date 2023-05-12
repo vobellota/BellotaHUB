@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>Bellota Apps Ingreso</title>
+        <script src="https://apps.bellota.co:10443/auth/js/keycloak.js"></script>
+        <script>
+            function iniciarSesion(){
+              login();  
+            }
+    
+            var keycloak = Keycloak();
+            keycloak.init({onLoad: 'login-required'}).success(function (authenticated) {
+                console.log(keycloak);
+                console.log(authenticated ? 'authenticated test' : 'not authenticated test');
+                document.getElementById('login:user').value = keycloak.tokenParsed.preferred_username;
+                document.getElementById('login:token').value = keycloak.token;
+                document.getElementById('login:iss').value = keycloak.tokenParsed.iss;
+                setTimeout(iniciarSesion,2000);
+                
+            }).error(function () {
+                alert('failed to initialize test');
+            });
+        </script>
+        <h:outputStylesheet name="css/jsfcrud.css"/>
+    </h:head>
+    
+    <h:body styleClass="login-body" id="body-custom">
+        <div id="image-background"></div>
+        <p:growl id="msgs" showDetail="true"/>
+        <i class="fa fa-2x fa-circle-o-notch fa-spin ajax-status-icon" aria-hidden="true"></i>
+        
+        <div class="login-panel" style="display: none">
+            <div class="left-part">
+                <p:graphicImage name="images/Bellota/bellota.svg" library="harmony-layout" width="80%" height="80%"/>
+                <h:form id="login">
+                    <div style="margin-top:32px" class="div-content">
+                        <p:outputLabel value="Nombre de Usuario"/>
+                        <p:inputText id="user" value="#{sesion.formUser}"/>
+                        <p:outputLabel value="Contraseña" />
+                        <p:password value="#{sesion.formPass}"/>
+                        <h:inputHidden id="token" value="#{sesion.token}"></h:inputHidden>
+                        <h:inputHidden id="iss" value="#{sesion.iss}"></h:inputHidden>
+                    </div>
+                    <p:commandButton value="Login" styleClass="raised-btn" action="#{sesion.iniciarSesion()}" update=":msgs"/>
+                    <p:remoteCommand name="login" update="msgs" action="#{sesion.iniciarSesionToken()}" oncomplete="document.location.href='#{facesContext.externalContext.requestContextPath}/HUB/dashboard_bellota.xhtml'" />
+                </h:form>
+            </div>
+             
+        </div>       
+
+        <h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="harmony-layout" />
+
+        <h:outputScript rendered="#{sesion.loggedIn}">
+            document.location.href='#{facesContext.externalContext.requestContextPath}/HUB/dashboard_bellota.xhtml';
+        </h:outputScript>
+
+        <br />
+    </h:body>
+</html>
+

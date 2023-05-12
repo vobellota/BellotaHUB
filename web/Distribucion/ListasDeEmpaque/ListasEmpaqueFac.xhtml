@@ -1,0 +1,596 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Listas de Empaque</ui:define>
+
+    <ui:define name="viewname">
+        <li>Distribucion</li>
+        <li>/</li>
+        <li><p:link outcome="/Distribucion/ListasDeEmpaque/ListasEmpaqueFac">Listas de Empaque</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="alerta_div" rendered="#{ListasEmpaqueFacBean.alarmable != 0}">
+            <p:commandButton class="icon_alerta_div" icon="fa fa-warning"/>
+            <p:inputText class="maximoCajasAgruparInput" value="#{ListasEmpaqueFacBean.cadenaAlarma}" style="width:96%" readonly="true"/>
+            <p:commandButton class="icon_alerta_div_close" icon="fa fa-times" onclick="btnAlerta(event)" type="button"/>
+            <p:dataList value="#{ListasEmpaqueFacBean.listaUnidadesSinParame}" var="listUnitites" class="datalist">
+                #{listUnitites}
+            </p:dataList>
+        </h:form>
+        <br/>
+        <!--Formularios de busqueda partida-->
+
+        <h:form id="form_send_real">
+
+            <p:panel>
+                <p:fieldset legend="Buscar por Rango de Facturas" style="margin-bottom:20px">
+                    <p:panelGrid columns="2" style="display:inline-block;" layout="grid">
+                        <p:outputLabel for="prefijoFactura" value="Prefijo de Factura: " />
+                        <p:selectOneMenu id="prefijoFactura" value="#{ListasEmpaqueFacBean.prefijoFactura}" style="width:100%">
+                            <f:selectItem itemLabel="CN" itemValue="CN" />
+                            <f:selectItem itemLabel="CD" itemValue="CD" />
+                            <f:selectItem itemLabel="CE" itemValue="CE" />
+                            <f:selectItem itemLabel="CI" itemValue="CI" />
+                            <f:selectItem itemLabel="CV" itemValue="CV" />
+                            <f:selectItem itemLabel="VC" itemValue="VC" />
+                            <f:selectItem itemLabel="VE" itemValue="VE" />
+                            <f:selectItem itemLabel="VT" itemValue="VT" />
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="2" style="display:inline-block; margin-right:100px;" layout="grid">
+                        <p:outputLabel for="nInicial" value="N. Inicial: " />
+                        <p:inputText id="nInicial"
+                                     value="#{ListasEmpaqueFacBean.numeroInicial}">
+                        </p:inputText>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="2" style="display:inline-block; margin-right:100px;" layout="grid">
+                        <p:outputLabel for="nFinal" value="N. Final: " />
+                        <p:inputText id="nFinal"
+                                     value="#{ListasEmpaqueFacBean.numeroFinal}">
+                        </p:inputText>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="2" style="display:inline-block;">
+                        <p:outputLabel for="fechaInicio" value="Fecha Inicio: " />
+                        <p:calendar id="fechaInicio" value="#{ListasEmpaqueFacBean.fechaInicio}" locale="es" navigator="true" pattern="yyyy-MM-dd"/>
+
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="2" style="display:inline-block;">
+                        <p:outputLabel for="fechaFin" value="Fecha Final: " />
+                        <p:calendar id="fechaFin" value="#{ListasEmpaqueFacBean.fechaFin}" locale="es" navigator="true" pattern="yyyy-MM-dd" />
+                    </p:panelGrid>
+                    <br />
+                </p:fieldset>
+
+
+                <p:commandButton value="Listar" id="btn_puc_save"
+                                 action="#{ListasEmpaqueFacBean.onSearchinReal}" update=":form_send_real :form_listado:datatableasdfasd"
+                                 style="margin-right:20px;" icon="fa fa-list-alt" />
+
+            </p:panel>
+        </h:form>
+
+        <br /><br />
+
+        <h:form id="form_listado">
+            <p:panel>
+                <p:fieldset legend="Listado de Facturas" style="margin-bottom:20px">
+                    <p:dataTable var="listas" value="#{ListasEmpaqueFacBean.listaEmpaqueConsultada}" id="datatableasdfasd" editable="true" editMode="cell" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+                                 {PageLinks} {NextPageLink} {LastPageLink} {Exporters1} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,20,25,30,35,40,45,50">
+                        <!--                        <p:column headerText="Masivo">
+                                                    <p:selectBooleanCheckbox value="12" label="Basic" />
+                                                </p:column>-->
+
+                        <p:column headerText="Paqueteo">
+                            <!--<p:selectBooleanCheckbox value="12" label="Basic" />-->
+                            <p:selectBooleanCheckbox value="#{ListasEmpaqueFacBean.checked[listas]}" label="Basic"/>
+                        </p:column>
+
+                        <p:column headerText="Factura">
+                            <h:outputText value="#{listas.factura}" />
+                        </p:column>
+
+                        <p:column headerText="Cliente">
+                            <h:outputText value="#{listas.cliente}" />
+                        </p:column>
+
+                        <p:column headerText="Destino">
+                            <h:outputText value="#{listas.destino}" />
+                        </p:column>
+
+                        <p:column headerText="No. Lineas">
+                            <h:outputText value="#{listas.nroLineas}" />
+                        </p:column>
+
+                        <p:column headerText="Peso">
+                            <h:outputText value="#{listas.peso}">
+                                <f:convertNumber pattern="#0.000" locale="en"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Volumen">
+                            <h:outputText value="#{listas.volumen}">
+                                <f:convertNumber pattern="#0.000" locale="en"/>
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:commandButton value="Crear" id="btn_crear_listas" 
+                                     action="#{ListasEmpaqueFacBean.onSelectedBills}"
+                                     style="margin-right:20px;" icon="fa fa-pencil"  update=":form_lio :form_lio:datatablefacturas" />
+
+                    <p:commandButton value="Limpiar" id="btn_borrar_listas"
+                                     action="#{ListasEmpaqueFacBean.onClearData}"
+                                     update=":form_listado:datatableasdfasd" 
+                                     style="margin-right:20px;" icon="fa fa-trash"/>
+
+                    <p:commandButton value="Consultar" id="btn_consultar_listas" 
+                                     action="#{ListasEmpaqueFacBean.onSelectCreatedBills}"
+                                     style="margin-right:20px;" icon="fa fa-files-o"  update=":form_lio :form_lio:datatablefacturas" />
+
+
+                </p:fieldset>
+            </p:panel>
+        </h:form>
+
+        <br /><br />
+
+        <h:form id="form_lio">
+            <p:remoteCommand name="reordenarList"  action="#{ListasEmpaqueFacBean.reordenarLista}" update=":form_lio:datatablefacturas:datatablelios" immediate="true"/>
+            <p:panel id="panel_lio">
+                <p:fieldset legend="Listas de Empaque" style="margin-bottom:20px" id="fieldset_lio">
+                    <p:growl id="msgs" showDetail="true"/>
+                    <p:dataTable var="listafacturas" value="#{ListasEmpaqueFacBean.listaFacturas}" id="datatablefacturas" editable="true" editMode="cell" rows="1"
+                                 paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}" paginatorPosition="top">
+                        <f:facet name="{Exporters}">
+                            <p:ajax event="page" listener="#{ListasEmpaqueFacBean.onPageChangeListFacturas}"/>
+                            <div style="float:right;padding-top: 5px;">
+                                <!--                                                                <h:commandLink>xls
+                                                                                                    <p:graphicImage name="/resources/img/excel.png" width="24"/>
+                                                                                                    <p:dataExporter type="xls" target="datatablefacturas" fileName="lios" />
+                                                                                                </h:commandLink>
+                                                                                                <h:commandLink>pdf
+                                                                                                    <p:graphicImage name="/resources/img/pdf.png" width="24"/>
+                                                                                                    <p:dataExporter type="pdf" target="datatablefacturas" fileName="lios"/>
+                                                                                                </h:commandLink>-->
+                                <p:commandButton onclick="PF('dialogShowUnities').show()" update=":form_export:bilenv" id="btn_lista_lios_exportar" title="BillEnv" action="#{ListasEmpaqueFacBean.exportarExcel}" style="margin-right:20px;" icon="fa fa-file-excel-o" value="BillEnv" />
+                                <p:commandButton ajax="false" value="FacturaXEmpaque" id="btn_lista_facturas_expo"
+                                                 action="#{ListasEmpaqueFacBean.getGenerateXls}" update=":form_lio:msgs"
+                                                 style="margin-right:20px;" icon="fa fa-file-excel-o" />
+                            </div>
+                        </f:facet>   
+                        <p:column>
+                            <p:row  style="height:  100px">
+                                <p:panel id="pnl-pr-toggleable" header="Factura" toggleable="true" toggleSpeed="500" closeSpeed="500" widgetVar="panel">
+                                    <p:panelGrid  id="gridLios">
+                                        <p:row>
+                                            <p:column >
+                                                <h:outputText value="Cliente" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="#{listafacturas.descripcionCliente}" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="Fecha" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="#{listafacturas.fecha}">
+                                                    <f:convertDateTime pattern="yyyy-MM-dd" />
+                                                </h:outputText>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column >
+                                                <h:outputText value="Origen" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="#{listafacturas.origen}" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="Total Paquetes" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="#{listafacturas.totalPaquetes}" />
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column >
+                                                <h:outputText value="Destino" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="#{listafacturas.destino}" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="Teléfono" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="#{listafacturas.telefono}">
+                                                    <f:convertNumber pattern="#0.000" locale="en"/>
+                                                </h:outputText>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <h:outputText value="Dirección" />
+                                            </p:column>
+                                            <p:column colspan="3">
+                                                <h:outputText value="#{listafacturas.direccion}" />
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <h:outputText value="Correo Electrónico" />
+                                            </p:column>
+                                            <p:column colspan="3">
+                                                <h:outputText value="#{listafacturas.correo}" />
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column >
+                                                <h:outputText value="Peso Total" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="#{listafacturas.pesoTotal}">
+                                                    <f:convertNumber pattern="#0.000" locale="en"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="Volumen Total" />
+                                            </p:column>
+                                            <p:column >
+                                                <h:outputText value="#{listafacturas.volumenTotal}">
+                                                    <f:convertNumber pattern="#0.000" locale="en"/>
+                                                </h:outputText>
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column>
+                                                <h:outputText value="Factura" />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{listafacturas.idFacturaAS}" />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="Lista Empaque" />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{listafacturas.idListaEmpaque}" />
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="2">
+                                                <h:outputText value="Comentario" />
+                                            </p:column>
+                                            <p:column colspan="2">
+                                                <h:inputTextarea  value="#{listafacturas.comentario}" style="width: 100%; height: 100%" />
+                                            </p:column>
+                                        </p:row>
+                                    </p:panelGrid> 
+                                </p:panel>
+                            </p:row>
+                            <p:row>
+                                <p:dataTable  var="listalios" value="#{listafacturas.listaLios}"  id="datatablelios" rows="10"  
+                                              paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+                                              {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                              rowsPerPageTemplate="5,10,15,20,25,30,35,40,45,50" paginatorPosition="bottom" editable="true" editMode="cell" 
+                                              selection="#{ListasEmpaqueFacBean.listatemporal}" rowKey="#{listalios.idEmpaque}">
+
+                                    <f:facet name="header">Líos</f:facet>
+
+                                    <!--** Eventos AJAX asociados a la tabla **-->
+                                    <p:ajax event="cellEdit" listener="#{ListasEmpaqueFacBean.onCellEditChangeLio}"  oncomplete="reordenarList()"/>
+
+
+                                    <p:column selectionMode="multiple" style="width:5%;text-align:center"/>
+
+                                    <!--                                    <p:column headerText="Eliminar" style="width:5%;text-align:center">
+                                                                            <p:selectBooleanCheckbox value="{ListasEmpaqueFacBean.checkeditem[listalios]}" label="Basic"/>
+                                                                        </p:column>-->
+
+                                    <p:column headerText="Grupo">
+                                        <h:outputText value="#{listalios.grupoDescripcion}" />
+                                    </p:column>
+
+                                    <p:column headerText="Lío">
+                                        <p:cellEditor>
+                                            <f:facet name="output" >
+                                                <h:outputText value="#{listalios.idLio}" />
+                                            </f:facet>
+                                            <f:facet name="input">
+                                                <p:inputText id="idLio" value="#{listalios.idLio}" style="width:96%" >
+                                                    <!--<p:ajax event="change" listener="{ListasEmpaqueFacBean.reordenarLista}" delay="2000"  update="@this"/>-->
+                                                </p:inputText>
+                                            </f:facet>
+                                        </p:cellEditor>
+                                    </p:column>
+
+                                    <p:column headerText="Nro Paquete">
+                                        <h:outputText value="#{listalios.idEmpaque}" />                                         
+                                    </p:column>
+
+                                    <p:column headerText="Código">
+                                        <h:outputText value="#{listalios.codigoProducto}" />
+                                    </p:column>
+
+                                    <p:column headerText="Producto">
+                                        <h:outputText value="#{listalios.productoDescripcion}" />
+                                    </p:column>
+
+                                    <p:column headerText="Embalaje">
+                                        <h:outputText value="#{listalios.embalaje}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </p:row>
+                            <!--                            <p:commandButton update=":form_search_fac:nroFactura" onclick="PF('dialogAgregarRegis').show()" title="Agregar" >
+                                                            <f:setPropertyActionListener value="{listafacturas}" target="{ListasEmpaqueFacBean.temporalFactura}" />
+                                                        </p:commandButton>-->
+
+                            <p:commandButton update=":form_lio:datatablefacturas:datatablelios :form_lio:datatablefacturas:pnl-pr-toggleable" id="btn_lista_lios_refrescar" title="refrescarDataTableLios"  style="margin-right:20px;" icon="fa fa-refresh" value="Refrescar" />
+
+                            <p:commandButton update=":form_lio:msgs" id="btn_lista_lios_eliminar" onclick="" title="Eliminar" action="#{ListasEmpaqueFacBean.eliminarDatosSeleccion}" style="margin-right:20px;" icon="fa fa-times" value="Eliminar" >
+                                <f:setPropertyActionListener value="#{listafacturas}" target="#{ListasEmpaqueFacBean.temporalFactura}" />
+                            </p:commandButton>
+
+                            <p:commandButton update=":form_lio:msgs :form_lio:datatablefacturas:pnl-pr-toggleable" id="btn_lista_lios_guardar" onclick="" title="Guardar" action="#{ListasEmpaqueFacBean.guardarListaEmpaque}" style="margin-right:20px;" icon="fa fa-save" value="Guardar" >
+                                <f:setPropertyActionListener value="#{listafacturas}" target="#{ListasEmpaqueFacBean.temporalFactura}" />
+                            </p:commandButton>
+
+                            <p:commandButton update=":form_lio:msgs" id="btn_lista_lios_imprimir" title="Imprimir"  action="#{ListasEmpaqueFacBean.facturasImprimir}" style="margin-right:20px;" icon="fa fa-print" value="Imprimir" >
+                                <f:setPropertyActionListener value="#{listafacturas}" target="#{ListasEmpaqueFacBean.temporalFactura}" />
+                            </p:commandButton>
+
+                            <p:commandButton update=":form_lio:msgs" id="btn_lista_lios_finalizar" onclick="" title="Finalizar" action="#{ListasEmpaqueFacBean.changeBillHeaderState}" style="margin-right:20px;" icon="fa fa-check" value="Finalizar" >
+                                <f:setPropertyActionListener value="#{listafacturas}" target="#{ListasEmpaqueFacBean.temporalFactura}" />
+                            </p:commandButton>
+
+                            <p:commandButton update=":form_preview:previo" onclick="PF('dialogShowPreview').show()" id="btn_lista_lios_vista_previa" title="Vista Previa" action="#{ListasEmpaqueFacBean.preview}" style="margin-right:20px;" icon="fa fa-eye" value="Vista Previa" >
+                                <f:setPropertyActionListener value="#{listafacturas}" target="#{ListasEmpaqueFacBean.temporalFactura}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </p:fieldset>
+            </p:panel>
+        </h:form>
+
+        <!--Modal del Formulario de la datatable-->
+        <!--************************************-->
+        <h:form id="form_export">
+            <p:dialog header="Unidades de Empaque" widgetVar="dialogShowUnities" 
+                      modal="true" id="modal_select">
+                <p:dataTable  id="bilenv" var="listasCabeceras" value="#{ListasEmpaqueFacBean.listaEmpaqueCabeceras}" 
+                              paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                              paginator="true" rows="10">
+
+                    <f:facet name="{Exporters}">
+                        <div style="float:right;padding-top: 5px;">
+                            <h:commandLink>
+                                <p:graphicImage url="../../resources/img/excel.png" width="24"/>
+                                <p:dataExporter type="xls" target="bilenv" fileName="BillEnv" />
+                                Exportar Excel
+                            </h:commandLink>
+                        </div>
+                    </f:facet>
+                    <p:column headerText="Destino">
+                        <h:outputText value="#{listasCabeceras.destino}" />                                         
+                    </p:column>
+                    <p:column headerText="Cliente">
+                        <h:outputText value="#{listasCabeceras.descripcioncliente}" />                                         
+                    </p:column>
+                    <p:column headerText="Direccion">
+                        <h:outputText value="#{listasCabeceras.direccion}" />                                         
+                    </p:column>
+                    <p:column headerText="Telefono">
+                        <h:outputText value="#{listasCabeceras.telefono}" />                                         
+                    </p:column>
+                    <p:column headerText="Correo">
+                        <h:outputText value="#{listasCabeceras.correo}" />                                         
+                    </p:column>
+                    <p:column headerText="Total Paquetes">
+                        <h:outputText value="#{listasCabeceras.nroLineas}" />                                         
+                    </p:column>
+                    <p:column headerText="Peso">
+                        <h:outputText value="#{listasCabeceras.peso}" >
+                            <f:convertNumber pattern="#0" locale="en"/>                             
+                        </h:outputText>                                         
+                    </p:column>
+                    <p:column headerText="Numero de Factura">
+                        <h:outputText value="#{listasCabeceras.nroFactura}" />                                         
+                    </p:column>
+                </p:dataTable>
+            </p:dialog>
+        </h:form>
+
+        <!--Modal del Formulario de la datatable-->
+        <!--************************************-->
+        <h:form id="form_preview">
+            <p:dialog header="Vista Previa" widgetVar="dialogShowPreview" 
+                      modal="true" id="modal_preview" class="ui-dialog-custom" 
+                      resizable="true" width="80%" height="75vh">
+                <p:dataTable  var="listasPrevias" id="previo" value="#{ListasEmpaqueFacBean.facturaImprimirPreview}">       
+                    <p:column>
+                        <p:row>
+                            <p:panelGrid  id="gridLiosCabecera">
+                                <h1 class="titulo_previa">Vista Previa Lista de Empaque</h1>
+                            </p:panelGrid>
+                            <p:panelGrid  id="gridLios">
+                                <p:row>
+                                    <p:column >
+                                        <h:outputText value="Cliente" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="#{listasPrevias.descripcionCliente}" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="Fecha" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="#{listasPrevias.fecha}">
+                                            <f:convertDateTime pattern="yyyy-MM-dd" />
+                                        </h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column >
+                                        <h:outputText value="Origen" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="#{listasPrevias.origen}" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="Total Paquetes" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="#{listasPrevias.totalPaquetes}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column >
+                                        <h:outputText value="Destino" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="#{listasPrevias.destino}" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="Telefono" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="#{listasPrevias.telefono}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="Dirección" />
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <h:outputText value="#{listasPrevias.direccion}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="Correo Electrónico" />
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <h:outputText value="#{listasPrevias.correo}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column >
+                                        <h:outputText value="Peso Total" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="#{listasPrevias.pesoTotal}">
+                                            <f:convertNumber pattern="#0.000" locale="en"/>
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="Volumen Total" />
+                                    </p:column>
+                                    <p:column >
+                                        <h:outputText value="#{listasPrevias.volumenTotal}">
+                                            <f:convertNumber pattern="#0.000" locale="en"/>
+                                        </h:outputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column>
+                                        <h:outputText value="Factura" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{listasPrevias.idFacturaAS}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="Lista Empaque" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{listasPrevias.idListaEmpaque}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputText value="Comentario" />
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <h:outputText value="#{listasPrevias.comentario}" style="width: 100%; height: 100%"/>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:row>
+                        <p:row>
+                            <p:dataTable  var="listaliospreview" value="#{listasPrevias.listaLiosAgrupada}"  id="datatableliospreview">
+                                <p:column headerText="Paquete">
+                                    <h:outputText value="#{listaliospreview.idLio}" />
+                                </p:column>
+
+                                <p:column headerText="Código">
+                                    <h:outputText value="#{listaliospreview.codigoProducto}" />
+                                </p:column>
+
+                                <p:column headerText="Producto">
+                                    <h:outputText value="#{listaliospreview.productoDescripcion}" />
+                                </p:column>
+
+                                <p:column headerText="Embalaje">
+                                    <h:outputText value="#{listaliospreview.embalaje}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:row>
+                    </p:column>
+                </p:dataTable>   
+            </p:dialog>
+        </h:form>
+
+        <h:form id="form_search_fac">
+            <p:dialog header="Agregar registro" widgetVar="dialogAgregarRegis" 
+                      modal="true" id="modal_agreg_regis">
+                <p:panel id="output">
+                    <p:panelGrid columns="3">
+                        <p:outputLabel for="nroFactura" value="Numero de Factura:"/>
+                        <h:outputText id="nroFactura" value="#{ListasEmpaqueFacBean.temporalFactura.nroFactura}" />
+                        <p:message for="nroFactura" />
+
+                        <p:outputLabel for="gruposCompatibles" value="Grupos Compatibles:" />
+                        <p:selectOneMenu id="gruposCompatibles" value="#{listafacturas.listaLios}" 
+                                         converter="converterGruposCompMenu" validatorMessage="lpc">
+                            <f:selectItems value="#{ListasEmpaqueFacBean.listaGruposCompatibles}" var="grupo" 
+                                           itemValue="#{grupo}" itemLabel="#{grupo.descripcion}" />
+                        </p:selectOneMenu>
+                        <p:message for="gruposCompatibles" />
+
+                        <p:outputLabel for="lioNo" value="Lío Número:"/>
+                        <p:inputText placeholder="Lio Numero"
+                                     id="lioNo"
+                                     required="true"/>
+                        <p:message for="lioNo" />
+
+                        <p:outputLabel for="nroPaquete" value="Numero de Paquete:"/>
+                        <p:inputText placeholder="Numero de Paquete"
+                                     id="nroPaquete"
+                                     required="true"/>
+                        <p:message for="nroPaquete" />
+
+                        <p:outputLabel for="producto" value="Producto:"/>
+                        <p:inputText placeholder="Producto"
+                                     id="producto"
+                                     required="true"/>
+                        <p:message for="producto" />
+
+                        <p:outputLabel for="embalaje" value="Embalaje:"/>
+                        <p:inputText placeholder="Embalaje"
+                                     id="embalaje"
+                                     required="true"/>
+                        <p:message for="embalaje" />
+                    </p:panelGrid>
+                </p:panel>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

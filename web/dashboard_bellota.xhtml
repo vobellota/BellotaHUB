@@ -1,0 +1,21 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Bellota HUB</ui:define>
+
+    <ui:define name="viewname">
+        <li>Inicio Bellota HUB</li>
+    </ui:define>
+
+    <ui:define name="content">
+        Bienvenido, Bellota Colombia S.A.S CI
+    </ui:define>
+    <h:form id="inicio" >
+        <h:inputHidden value="#{ProductosCompatiblesBean.inSynchronizingItems()}" />
+        <h:inputHidden value="#{ProductosCompatiblesBean.inSynchronizingUnits()}" />
+    </h:form> 
+</ui:composition>

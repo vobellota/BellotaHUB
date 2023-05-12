@@ -1,0 +1,36 @@
+.infoProf{
+    width: 1000px;
+    margin: auto;
+    border: #000 outset 2px;
+    padding: 5px;
+}
+
+.logo{
+    width: 752px; height: 162px; 
+    margin: auto;
+    background-image: url(../img/logofact.png);
+    background-color: black;
+}
+
+.rf-p{
+    background-color: white;
+}
+
+@page{
+    size:letter;
+    margin:2em;	
+    @top-right {
+    content: "Pagina "  counter(page) " de " counter(pages)
+}
+
+@bottom-center{
+    font-style: italic;
+    content: "LINEA DE ATENCION AL CLIENTE: 018000 938938 E-mail: servicio.cliente@col.bellota.com www.bellota.com.co";
+    color: red
+}
+
+
+table {
+    -fs-table-paginate: paginate;
+}
+

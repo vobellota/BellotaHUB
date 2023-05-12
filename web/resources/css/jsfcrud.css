@@ -1,0 +1,137 @@
+.ui-widget {
+    font-size: 12px !important;
+}
+.ui-layout-north {
+    z-index: 20 !important;
+    overflow: visible !important;;
+}
+.ui-layout-north .ui-layout-unit-content {
+    overflow: visible !important;
+}
+.ui-widget-header {
+    text-align: center;
+    text-transform: uppercase;
+}
+.ui-button {
+    margin-top: 10px !important;
+}
+
+#image-background{
+    position:absolute !important;
+    height:100%;
+    width:100%;
+    filter:blur(4px);
+    /*background: url("#{resource['harmony-layout:images/Bellota/CF048965.jpg']}") no-repeat;*/
+    background-color: #f4f4f4 !important;
+    background-size: cover;
+}
+
+#body-custom{
+    background:none !important;
+    position:absolute !important;
+    top:0px;
+    left:0px;
+}
+
+.login-body .login-panel{
+    position: relative !important;
+    background-color: #f4f4f4 !important;
+    height: 400px !important;
+    width: 480px !important;
+    -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+    -moz-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.16);
+    margin: 20vh auto !important;
+}
+
+/*.login-body .login-panel .right-part{
+    float: none !important;
+    width: 50%;
+    display:none !important;
+    padding: 36px 75px 36px 36px;
+}*/
+
+.login-body .login-panel .left-part{
+    float: none !important;
+    width: 100% !important;
+    padding:50px !important;
+}
+
+.login-body .login-panel .left-part .login-panel-header {
+    font-size: 28px;
+    font-weight: 600;
+    text-align: left;
+    color: #333333; 
+}
+.login-body .login-panel .left-part .login-panel-subheader {
+    font-size: 17px;
+    display: block;
+    text-align: left;
+    color: #666666;
+    margin-top: 6px; 
+}
+.login-body .login-panel .left-part .ui-inputfield {
+    width: 100%;
+    margin-top: 6px;
+    margin-bottom: 24px;
+    display: block;
+}
+.login-body .login-panel .left-part .ui-inputswitch {
+    vertical-align: middle;
+    margin-right: 12px; 
+}
+.login-body .login-panel .left-part .ui-outputlabel {
+    vertical-align: middle; 
+}
+.login-body .login-panel .left-part button {
+    margin-top: 26px !important;
+    border:0px !important;
+    padding:4px 20px !important;
+    background-color: #ed2939 !important;
+    font-size:15px !important;
+}
+
+#hidden_button_close{
+    display:hidden !important;
+}
+
+#hidden_button_close span{
+    display:hidden !important;
+}
+
+@media (max-width:600px){
+   .login-body .login-panel{
+        height: 300px !important;
+        width: 280px !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        box-shadow: none !important;
+    }
+    
+    .login-body .login-panel .left-part{
+        padding:30px !important;
+    }
+    
+    .login-body .login-panel .left-part button {
+        margin-top: 0px !important;
+        padding:4px 10px !important;
+    }
+    
+    .login-body .login-panel .left-part .ui-inputfield {
+        width: 100%;
+        margin-bottom: 18px !important;
+        display: block;
+    }
+    
+    .div-content{
+        margin-top: 25px !important;
+    }
+    
+    #image-background{
+        display:none !important;
+    }
+    
+    #body-custom{
+        background:#f4f4f4 !important;
+    }
+}

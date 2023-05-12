@@ -1,0 +1,229 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Productos</ui:define>
+    <ui:define name="viewname">
+        <li>Distribucion</li>
+        <li>/</li>
+        <li><p:link outcome="/Distribucion/ListasDeEmpaque/ProductosComp">Productos</p:link></li>
+    </ui:define>
+    
+    <ui:define name="content">
+        <h:form id="alerta_div" rendered="#{ProductosCompatiblesBean.alarmable != 0}">
+            <p:commandButton class="icon_alerta_div" icon="fa fa-warning"/>
+            <p:inputText class="maximoCajasAgruparInput" value="#{ProductosCompatiblesBean.cadenaAlarma}" style="width:96%" readonly="true"/>
+            <p:commandButton class="icon_alerta_div_close" icon="fa fa-times" onclick="btnAlerta(event)" type="button"/>
+            <p:dataList value="#{ProductosCompatiblesBean.listaUnidadesSinParame}" var="listUnitites" class="datalist">
+                #{listUnitites}
+            </p:dataList>
+        </h:form>
+        
+        <!--<br /><br />-->
+        <h:form id="formulario">
+            <p:growl id="msgs" showDetail="true"/>
+            <!--** Datatable, conversion, arreglo y variable para hacer "foreach" **-->
+            
+            <p:dataTable id="PRODUCTOSCOMPATIBLES"  value="#{ProductosCompatiblesBean.listaProductosCompatibles}" 
+                         var="productoscompatibles" 
+                         reflow="true"
+                         editable="true"
+                         paginator="true"
+                         rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+                
+                <!--** Breadcrumb **-->
+
+                <f:facet name="header">
+                    Productos
+                </f:facet>
+                
+                <!--** Eventos AJAX asociados a la tabla **-->
+                
+                <p:ajax event="rowEditInit" listener="#{ProductosCompatiblesBean.inSynchronizingGrupos}" ></p:ajax>
+                <p:ajax event="rowEdit" listener="#{ProductosCompatiblesBean.onRowEdit}" update=":formulario:msgs"></p:ajax>
+                <p:ajax event="rowEditCancel" listener="#{ProductosCompatiblesBean.onRowCancel}" update=":formulario:msgs"></p:ajax>
+                
+                <!--** Columnas de la tabla **-->
+                
+                <p:column headerText="Codigo del Producto" filterBy="#{productoscompatibles.codigoProducto}" sortBy="#{productoscompatibles.codigoProducto}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{productoscompatibles.codigoProducto}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="codigoProductoInput" value="#{productoscompatibles.codigoProducto}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Unidades de Empaque">
+                    <p:commandButton update=":form-dlg-prodcutosCompDialog:datatableunities" onclick="PF('dialogShowUnities').show()"  action="#{ProductosCompatiblesBean.onSelectUnitiesAcepted}" icon="fa fa-cubes">
+                        <f:setPropertyActionListener value="#{productoscompatibles}" target="#{ProductosCompatiblesBean.selectedProductosCompRow}" />
+                    </p:commandButton>
+                </p:column>
+                
+                <p:column headerText="Descripción" filterBy="#{productoscompatibles.descripcion}" sortBy="#{productoscompatibles.descripcion}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{productoscompatibles.descripcion}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="descripcionInput" value="#{productoscompatibles.descripcion}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Largo" filterBy="#{productoscompatibles.largo}" sortBy="#{productoscompatibles.largo}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{productoscompatibles.largo}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="largoInput" value="#{productoscompatibles.largo}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Alto" filterBy="#{productoscompatibles.alto}" sortBy="#{productoscompatibles.alto}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{productoscompatibles.alto}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="altoInput" value="#{productoscompatibles.alto}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Ancho" filterBy="#{productoscompatibles.ancho}" sortBy="#{productoscompatibles.ancho}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{productoscompatibles.ancho}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="anchoInput" value="#{productoscompatibles.ancho}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Peso Caja Master" filterBy="#{productoscompatibles.pesoCajaMaster}" sortBy="#{productoscompatibles.pesoCajaMaster}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{productoscompatibles.pesoCajaMaster}" /></f:facet>
+                        <f:facet name="input"><p:inputText id="pesoCajaMasterInput" value="#{productoscompatibles.pesoCajaMaster}" style="width:96%"/></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Estado" filterBy="#{productoscompatibles.estadoProducto}" sortBy="#{productoscompatibles.estadoProducto}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{productoscompatibles.estadoProducto}" /></f:facet>
+                        <f:facet name="input">
+                            <p:selectOneMenu id="estadoProductoCompInput" value="#{productoscompatibles.estadoProducto}" style="width:100%">
+                                <f:selectItem itemLabel="Activo" itemValue="Activo" />
+                                <f:selectItem itemLabel="Inactivo" itemValue="Inactivo" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <!--** Iconos al final de las comunas **-->
+
+<!--                <p:column style="width:35px;">
+                    <p:rowEditor />
+                </p:column>-->
+                
+            </p:dataTable>
+            
+            <!-- Boton de la Modal del Formulario -->
+<!--            <h:panelGrid columns="1" cellpadding="5">
+                <p:commandButton value="Crear" type="button" onclick="PF('dialogAdd').show();" /> 
+            </h:panelGrid>-->
+        </h:form>
+        
+        <!--Modal del Formulario de mostrar unidades de empaque-->
+        <!--***************************************************-->
+        <h:form id="form-dlg-prodcutosCompDialog">
+            <p:dialog header="Unidades de Empaque" widgetVar="dialogShowUnities" 
+                      modal="true" id="modal_select">
+                <p:panel id="output">
+                    <!--DataTable de unidades de emapaque-->
+                    <!--*********************************-->
+                    <p:dataTable var="unidadesEmpaque" value="#{ProductosCompatiblesBean.listaUnidadesEmpaque}" id="datatableunities">
+                        <p:column headerText="Codigo Producto">
+                            <h:outputText value="#{unidadesEmpaque.codigoProducto}" />
+                        </p:column>
+
+                        <p:column headerText="Cantidad">
+                            <h:outputText value="#{unidadesEmpaque.cantidad}" />
+                        </p:column>
+
+                        <p:column headerText="Descipcion">
+                            <h:outputText value="#{unidadesEmpaque.descripcion}" />
+                        </p:column>
+
+                        <p:column headerText="Cantidad Descrita">
+                            <h:outputText value="#{unidadesEmpaque.cantidadDescrita}" />
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+            </p:dialog>
+        </h:form>
+        
+        <!--Modal del Formulario de Agregar-->
+        <!--*********************************-->
+        <h:form id="form_save">
+            
+            <p:dialog header="Modal" widgetVar="dialogAdd" modal="true">
+                <p:panel id="output">
+                    
+                    <p:panelGrid columns="3">
+                        <p:outputLabel for="codigoProducto" value="Codigo Producto: " />
+                        <p:inputText placeholder="Codigo Producto"
+                                    id="codigoProducto"
+                                    required="true"
+                                    value="#{ProductosCompatiblesBean.nuevosProductosCompatibles.codigoProducto}">
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{ProductosCompatiblesBean.codigoProduTemp}"/>
+                            <!--****************************-->
+                        </p:inputText>
+                        <p:message for="codigoProducto" />
+                        
+                        <p:outputLabel for="descripcion" value="Descripcion" />
+                        <p:inputText placeholder="Descripcion"
+                                    id="descripcion"
+                                    value="#{ProductosCompatiblesBean.nuevosProductosCompatibles.descripcion}"/>
+                        <p:message for="descripcion" />
+                        
+                        <p:outputLabel for="largo" value="Largo" />
+                        <p:inputText placeholder="Largo"
+                                    id="largo"
+                                    required="true"
+                                    value="#{ProductosCompatiblesBean.nuevosProductosCompatibles.largo}">
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="largo" />
+                        
+                        <p:outputLabel for="alto" value="Alto" />
+                        <p:inputText placeholder="Alto"
+                                    id="alto"
+                                    required="true"
+                                    value="#{ProductosCompatiblesBean.nuevosProductosCompatibles.alto}">
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="alto" />
+                        
+                        <p:outputLabel for="ancho" value="Ancho" />
+                        <p:inputText placeholder="Ancho"
+                                    id="ancho"
+                                    required="true"
+                                    value="#{ProductosCompatiblesBean.nuevosProductosCompatibles.ancho}">
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="ancho" />
+                        
+                        <p:outputLabel for="pesoCajaMaster" value="Peso Caja Master" />
+                        <p:inputText placeholder="Peso Caja Master"
+                                    id="pesoCajaMaster"
+                                    required="true"
+                                    value="#{ProductosCompatiblesBean.nuevosProductosCompatibles.pesoCajaMaster}">
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="pesoCajaMaster" />
+                        
+                    </p:panelGrid>
+                    <br/>
+                    <p:commandButton value="Guardar" id="btn_puc_save"
+                                     action="#{ProductosCompatiblesBean.onStoring}" update=":formulario:PRODUCTOSCOMPATIBLES,:formulario:msgs,output"
+                                     style="margin-right:20px;" icon="fa fa-send" 
+                                     oncomplete="handleSubmit(args,'dialogAdd');"/>
+                    
+                    <p:commandButton onclick="dialogAdd.hide()" class="hidden_button_close" style="display:none !important;"/>
+                </p:panel>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

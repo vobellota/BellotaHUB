@@ -1,0 +1,13 @@
+{
+  "realm": "bellotahub",
+  "auth-server-url": "http://192.168.40.14:10080/auth",
+  "ssl-required": "external",
+  "resource": "clikey",
+  "verify-token-audience": true,
+  "credentials": {
+    "secret": "346a6a8a-2e40-496b-97ff-ad3e94156803"
+  },
+  "use-resource-role-mappings": true,
+  "confidential-port": 0,
+  "policy-enforcer": {}
+}

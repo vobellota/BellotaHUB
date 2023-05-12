@@ -1,0 +1,67 @@
+.ui-row-editor .ui-row-editor-pencil {
+    /*margin-left:8px;*/
+}
+body .ui-datatable .ui-datatable-data > tr .ui-row-editor .ui-icon.ui-icon-check {
+    /*display:none;*/
+}
+
+body .ui-panel .ui-panel-content{
+    border:none !important;
+}
+
+body .ui-datatable .ui-datatable-data > tr .ui-row-editor .ui-icon.ui-icon-close{
+    /*display:none;*/
+}
+
+.output_without_styles{
+    padding:6px 12px;
+}
+
+div[id="form_lio:datatablefacturas:pnl-pr-toggleable_content"] {
+    display:none;
+    padding: 0px !important;
+}
+
+html #alerta_div{
+    background-color: #ffe399 !important;
+    padding: 10px !important;
+}
+
+html .icon_alerta_div, .maximoCajasAgruparInput{
+    border:none !important;
+    background-color: transparent !important;
+    border-radius:5px !important;
+}
+
+html .icon_alerta_div{
+    color:black !important;
+}
+
+html .maximoCajasAgruparInput{
+    display:inline-block !important;
+    width: 90% !important;
+}
+
+html .icon_alerta_div_close{
+    background-color: transparent !important;
+    border:none !important;
+    color:black !important;
+}
+
+body .ui-datalist .ui-datalist-content{
+    padding:0px !important;
+    background-color: transparent !important;
+    border:0px !important;
+    font-size:12px !important;
+    font-family: "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+body .ui-dialog-custom{
+    position:fixed !important;
+    top:0px;
+    left:0px;
+}
+
+body .titulo_previa{
+    text-align: center !important;
+}

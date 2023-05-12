@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Compras</ui:define>
+
+    <ui:define name="viewname">
+        <li>Compras</li>
+        <li>/</li>
+        <li><p:link outcome="/Compras/OrdenCompra/ActualizarFechaRequerida">Fecha Requerida</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <p:link outcome="Plantilla Excel" value="Plantilla Fechas" style="margin-right:20px;" href="../../resources/manuales/PlantillaFechasOC.xls">
+            <f:param name="excel" value="20" />
+        </p:link><br /><br />
+        <p:link outcome="Manual de Usuario" value="Manual de Usuario" style="margin-right:20px;" href="../../resources/manuales/RegistrodeFechasOC.pdf">
+            <f:param name="manual" value="20" />
+        </p:link><br /><br />
+
+        <h:form enctype="multipart/form-data">
+            <p:growl id="display" showDetail="true" />
+
+            <p:fileUpload fileUploadListener="#{comprasBean.leerArchivo}" mode="advanced" dragDropSupport="false"
+                          fileLimit="1" allowTypes="/(\.|\/)(xls)$/" label="Elegir Archivo" />
+
+            <p:commandButton ajax="false" action="#{comprasBean.subirArchivo}" value="Mostrar Fechas" />
+            <!-- <p:commandButton value="Guardar" id="btn_save2" action="{comprasBean.actualizarFechasVencimiento}"
+                             style="margin-right:20px;" icon="fa fa-save"/> -->
+        </h:form>
+
+        <h:form id="formulario">
+            <p:dialog header="PreciosProductos" widgetVar="dlgPrecios" modal="true"></p:dialog>
+
+            <p:growl id="msgs" showDetail="true"/>
+
+            <p:dataTable id="FechasPO"  value="#{comprasBean.listaFechas}" 
+                         emptyMessage="No se encontraron Registros" 
+                         filteredValue="#{comprasBean.filteredListaFechas}"
+                         var="fechas" editable="true" widgetVar="DatesTable"
+                         paginator="true" rows="10"
+                         rowKey="#{fechas.numeroOrdenCompra}-#{fechas.lineaItem}" selection="#{comprasBean.fechasSeleccionadas}"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+
+                <f:facet name="header">
+                    Lista de Actualizaciones de Fechas
+                </f:facet>
+
+                <p:column  selectionMode="multiple" />
+
+                <p:column headerText="OC" filterBy="#{fechas.numeroOrdenCompra}" sortBy="#{fechas.numeroOrdenCompra}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.numeroOrdenCompra}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.numeroOrdenCompra}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Linea" filterBy="#{fechas.lineaItem}" sortBy="#{fechas.lineaItem}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.lineaItem}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.lineaItem}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Fecha Venc." filterBy="#{fechas.fechaVencimiento}" sortBy="#{fechas.fechaVencimiento}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.fechaVencimiento}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.fechaVencimiento}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Dias Dif. Venc." filterBy="#{fechas.diasVencimiento}" sortBy="#{fechas.diasVencimiento}" filterMatchMode="contains" style="background-color: #{fechas.colorVencimiento};">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.diasVencimiento}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.diasVencimiento}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Fecha sol conf" filterBy="#{fechas.fechaRequerido}" sortBy="#{fechas.fechaRequerido}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.fechaRequerido}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.fechaRequerido}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Dias Dif. sol conf" filterBy="#{fechas.diasFechaRequerido}" sortBy="#{fechas.diasFechaRequerido}" filterMatchMode="contains" style="background-color: #{fechas.colorRequerido};">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.diasFechaRequerido}"  /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.diasFechaRequerido}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Fecha recep conf" filterBy="#{fechas.fechaRecepcion}" sortBy="#{fechas.fechaRecepcion}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.fechaRecepcion}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.fechaRecepcion}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Dias Dif. recep conf" filterBy="#{fechas.diasFechaRecepcion}" sortBy="#{fechas.diasFechaRecepcion}" filterMatchMode="contains" style="background-color: #{fechas.colorRecepcion};">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.diasFechaRecepcion}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.diasFechaRecepcion}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                
+                
+
+                <p:column headerText="Fecha Vencimiento ACTUAL" filterBy="#{fechas.actualfechaVencimiento}" sortBy="#{fechas.actualfechaVencimiento}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.actualfechaVencimiento}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.actualfechaVencimiento}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Fecha Requerida ACTUAL" filterBy="#{fechas.actualfechaRequerido}" sortBy="#{fechas.actualfechaRequerido}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.actualfechaRequerido}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.actualfechaRequerido}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Fecha Recepcion ACTUAL" filterBy="#{fechas.actualfechaRecepcion}" sortBy="#{fechas.actualfechaRecepcion}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{fechas.actualfechaRecepcion}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{fechas.actualfechaRecepcion}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <f:facet name="footer">
+                    <p:commandButton process="FechasPO" icon="fa fa-save" value="Guardar" action="#{comprasBean.actualizarFechasVencimiento}"/>
+                </f:facet>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

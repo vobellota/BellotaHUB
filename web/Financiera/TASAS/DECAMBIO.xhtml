@@ -1,0 +1,341 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    
+    <ui:define name="title">Tasas de Cambio</ui:define>
+    <ui:define name="viewname">
+        <li>Financiera</li>
+        <li>/</li>
+        <li><p:link outcome="/Financiera/TASAS/DECAMBIO">TASAS DE CAMBIO v.2.0 </p:link></li>
+    </ui:define>
+    
+    <ui:define name="content">
+        
+        <!--Escript para descargar el doc de manual de usuario-->
+        <!--*************************************-->
+        <h:form>   
+            <p:commandButton value="Manual de Uso" ajax="false" icon="fa fa-arrow-down">
+                <p:fileDownload value="#{CXPBean.fileCXP}" />
+            </p:commandButton>      
+        </h:form>
+        <!--*************************************-->
+        
+        <br/><br/>
+        
+        <h:form id="formulario">
+            <p:growl id="msgs" showDetail="true"/>
+            
+            <!--** Datatable, conversion, arreglo y variable para hacer "foreach" **-->
+            
+            <p:dataTable id="CXP"  value="#{CXPBean.listaCuentasx}" 
+                         emptyMessage="No se encontraron Registros" 
+                         filteredValue="#{CXPBean.filteredListaCuentasx}"
+                         var="cxp" editable="true" widgetVar="tasasTable"
+                         paginator="true"
+                         rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+                
+                <!--** Breadcrumb **-->
+                
+                <f:facet name="header">
+                    Tasas de Cambio  v.2.0
+                </f:facet>
+                
+                <!--** Eventos AJAX asociados a la tabla **-->
+                
+                <p:ajax event="rowEdit" listener="#{CXPBean.onRowEdit}" update=":formulario:msgs"></p:ajax>
+                <p:ajax event="rowEditCancel" listener="#{CXPBean.onRowCancel}" update=":formulario:msgs"></p:ajax>
+                
+                <!--** Columnas de la tabla **-->
+                
+                <p:column headerText="Identificador de Registros" filterBy="#{cxp.cmid}" sortBy="#{cxp.cmid}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText rendered="#{cxp.cmid eq 'CM'}" value="Activo" />
+                            <h:outputText rendered="#{cxp.cmid eq 'CZ'}" value="Inactivo" />
+                        </f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{cxp.cmid}"  /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Moneda desde" filterBy="#{cxp.cmfrc}" sortBy="#{cxp.cmfrc}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{cxp.cmfrc}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{cxp.cmfrc}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Moneda Hasta" filterBy="#{cxp.cmtoc}" sortBy="#{cxp.cmtoc}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{cxp.cmtoc}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{cxp.cmtoc}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Periodo" filterBy="#{cxp.cmdat}" sortBy="#{cxp.cmdat}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{cxp.cmdat}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{cxp.cmdat}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Tasa de cambio Real" filterBy="#{cxp.cmexc}" sortBy="#{cxp.cmexc}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cxp.cmexc}">
+                                <f:convertNumber pattern="#0.0000000" locale="ger"/>
+                            </h:outputText>
+                        </f:facet>
+                        <f:facet name="input">
+                            <h:inputText id="tasaCambio1Input" value="#{cxp.cmexc}" style="width:96%;">
+                                <f:convertNumber pattern="#0.0000000" locale="ger"/>
+                            </h:inputText>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Tasa de cambio Presupuesto" filterBy="#{cxp.cmexp}" sortBy="#{cxp.cmexp}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cxp.cmexp}">
+                                <f:convertNumber pattern="#0.0000000" locale="ger"/>
+                            </h:outputText>
+                        </f:facet>
+                        <f:facet name="input">
+                            <h:inputText id="tasaCambio2Input" value="#{cxp.cmexp}" style="width:96%;">
+                                <f:convertNumber pattern="#0.0000000" locale="ger"/>
+                            </h:inputText>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Tasa de cambio Forecast" filterBy="#{cxp.cmexf}" sortBy="#{cxp.cmexf}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{cxp.cmexf}">
+                                <f:convertNumber pattern="#0.0000000" locale="ger"/>
+                            </h:outputText>
+                        </f:facet>
+                        <f:facet name="input">
+                            <h:inputText id="tasaCambio3Input" value="#{cxp.cmexf}" style="width:96%;">
+                                <f:convertNumber pattern="#0.0000000" locale="ger"/>
+                            </h:inputText>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+<!--                <p:column headerText="Terminal">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="{cxp.cmwsid}" /></f:facet>
+                        <f:facet name="input"><h:outputText value="{cxp.cmwsid}" style="padding:6px 12px;" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Usuario">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="{cxp.cmwusr}" /></f:facet>
+                        <f:facet name="input"><h:outputText value="{cxp.cmwusr}" style="padding:6px 12px;" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Fecha">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="{cxp.cmwdat}" /></f:facet>
+                        <f:facet name="input"><h:outputText value="{cxp.cmwdat}" style="padding:6px 12px;" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+                
+                <p:column headerText="Hora">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="{cxp.cmwtim}" /></f:facet>
+                        <f:facet name="input"><h:outputText value="{cxp.cmwtim}" style="padding:6px 12px;" /></f:facet>
+                    </p:cellEditor>
+                </p:column>-->
+                
+                <!--** Iconos al final de las comunas **-->
+                <p:column style="width:35px;">
+                    <p:rowEditor />
+                </p:column>
+                
+                <!--Eliminar registro boton que diaspara modal y manda los parametros-->
+                <!--*********************************-->
+                <p:column headerText="Acciones">
+                    <p:commandButton oncomplete="PF('dialogDelete').show()" icon="fa fa-trash" title="View">
+                        <f:setPropertyActionListener value="#{cxp}" target="#{CXPBean.selectCxpRow}" />
+                    </p:commandButton>
+                </p:column>
+                
+            </p:dataTable>
+            
+            <!-- Boton de la Modal del Formulario de crear-->
+            <h:panelGrid columns="1" cellpadding="5">
+                <p:commandButton value="Crear" type="button" onclick="PF('dialogAdd').show();" /> 
+            </h:panelGrid>
+        </h:form>
+        
+        <!--Modal del Formulario de Eliminar-->
+        <!--*********************************-->
+
+        <h:form>
+            <p:dialog header="Eliminar Registro" widgetVar="dialogDelete" 
+                  modal="true" showEffect="fade" hideEffect="fade" 
+                  resizable="false">
+                <p:outputPanel id="deleteDetail">
+                    <p:outputLabel value="¿Desea eliminar este registro?" />
+                    <br /><br />
+                    <p:commandButton value="No" type="button" onclick="PF('dialogDelete').hide();" icon="fa fa-close" style="margin-left:10px; float:right !important;"/>
+                    <p:commandButton value="Si" id="btn_modal_delete"
+                             action="#{CXPBean.onDeleteAcepted}"
+                             icon="fa fa-check" update=":formulario:CXP,:formulario:msgs"  
+                             oncomplete="PF('dialogDelete').hide();" style="float:right !important;"/>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
+            
+        <!--Modal del Formulario de Agregar-->
+        <!--*********************************-->
+        <h:form id="form_save">
+            <p:dialog header="Tasas de Cambio" widgetVar="dialogAdd" modal="true">
+                <p:panel id="output">
+                    <h:panelGrid columns="3">
+                        <p:outputLabel for="tasaInversa" value="¿Desear crear la Tasa Inversa?" />
+                        <p:selectOneMenu id="tasaInversa" style="width:100%">
+                            <f:selectItem itemLabel="Si" itemValue="Si" />
+                            <f:selectItem itemLabel="No" itemValue="No" />
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{CXPBean.onChangeSelect}" update="output"/>
+                            <!--****************************-->
+                        </p:selectOneMenu>
+                        <p:message for="tasaInversa" />
+                        
+                        <p:outputLabel for="mesDesdeSave" value="Moneda Desde: " />
+                        <p:selectOneMenu id="mesDesdeSave" value="#{CXPBean.nuevaCxp.cmfrc}" style="width:100%" required="true">
+                            <f:selectItem itemLabel="Seleccione..." itemValue="" />
+                            <f:selectItem itemLabel="USD" itemValue="USD" />
+                            <f:selectItem itemLabel="BSV" itemValue="BSV" />
+                            <f:selectItem itemLabel="COP" itemValue="COP" />
+                            <f:selectItem itemLabel="PSO" itemValue="PSO" />
+                            <f:selectItem itemLabel="BRL" itemValue="BRL" />
+                            <f:selectItem itemLabel="EUR" itemValue="EUR" />
+                            <f:selectItem itemLabel="BSF" itemValue="BSF" />
+                        </p:selectOneMenu>
+                        <p:message for="mesDesdeSave" />
+
+                        <p:outputLabel for="mesHastaSave" value="Moneda Hasta: " />
+                        <p:selectOneMenu id="mesHastaSave" value="#{CXPBean.nuevaCxp.cmtoc}" style="width:100%" required="true">
+                            <f:selectItem itemLabel="Seleccione..." itemValue="" />
+                            <f:selectItem itemLabel="USD" itemValue="USD" />
+                            <f:selectItem itemLabel="BSV" itemValue="BSV" />
+                            <f:selectItem itemLabel="COP" itemValue="COP" />
+                            <f:selectItem itemLabel="PSO" itemValue="PSO" />
+                            <f:selectItem itemLabel="BRL" itemValue="BRL" />
+                            <f:selectItem itemLabel="EUR" itemValue="EUR" />
+                            <f:selectItem itemLabel="BSF" itemValue="BSF" />
+                        </p:selectOneMenu>
+                        <p:message for="mesHastaSave" />
+                        
+                        <p:outputLabel for="periodoSave" value="Periodo: " />
+                        <p:inputText placeholder="Periodo"
+                                     id="periodoSave"
+                                     value="#{CXPBean.nuevaCxp.cmwdat}"
+                                     style="width:100%" />
+                        <p:message for="periodoSave" />
+
+
+                        <p:outputLabel for="tasaCambio1Save" value="Tasa de cambio Real: " />
+                        <p:inputText placeholder="Tasa de cambio 1"
+                                 id="tasaCambio1Save"
+                                 value="#{CXPBean.nuevaCxp.cmexc}"
+                                 style="width:100%" >
+                                 <f:convertNumber pattern="#0,000000000" locale="es"/>
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{CXPBean.tasaRealInvertTemp}" update="tasaCambio1SaveClone"/>
+                            <!--****************************-->
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="tasaCambio1Save" />
+                        
+                        <p:outputLabel for="tasaCambio2Save" value="Tasa de cambio Presupuesto: " />
+                        <p:inputText placeholder="Tasa de cambio 2"
+                                     id="tasaCambio2Save"
+                                     value="#{CXPBean.nuevaCxp.cmexp}"
+                                     style="width:100%" >
+                                    <f:convertNumber pattern="#0,000000000" locale="es"/>
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{CXPBean.tasaPresupInvert}" update="tasaCambio2SaveClone"/>
+                            <!--****************************-->
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="tasaCambio2Save" />
+                        
+                        <p:outputLabel for="tasaCambio3Save" value="Tasa de cambio Forecast: " />
+                        <p:inputText placeholder="Tasa de cambio 3"
+                                     id="tasaCambio3Save"
+                                     value="#{CXPBean.nuevaCxp.cmexf}"
+                                     style="width:100%" >
+                                     <f:convertNumber pattern="#0,000000000" locale="es"/>
+                            <!--Ajax para los eventos change-->
+                            <!--****************************-->
+                            <p:ajax event="change" listener="#{CXPBean.tasaForecaInvert}" update="tasaCambio3SaveClone"/>
+                            <!--****************************-->
+                            <f:validateLongRange minimum = "1"/>
+                        </p:inputText>
+                        <p:message for="tasaCambio3Save" />
+                        
+                        <p:outputLabel for="tasaCambio1Save" value="Tasa de cambio Real (Inversa): " 
+                                       rendered="#{CXPBean.tasaInv eq 'Si'}"/>
+                        <p:inputText placeholder="Tasa de cambio 1"
+                                 id="tasaCambio1SaveClone"
+                                 value="#{CXPBean.tasaRealInvert}"
+                                 style="width:100%"
+                                 readonly="true"
+                                 rendered="#{CXPBean.tasaInv eq 'Si'}">
+                                 <f:convertNumber pattern="#0,000000000" locale="es"/>
+                        </p:inputText>
+                        <p:message for="tasaCambio1SaveClone" />
+                        
+                        <p:outputLabel for="tasaCambio2Save" value="Tasa de cambio Presupuesto (Inversa): " 
+                                       rendered="#{CXPBean.tasaInv eq 'Si'}"/>
+                        <p:inputText placeholder="Tasa de cambio 2"
+                                     id="tasaCambio2SaveClone"
+                                     value="#{CXPBean.tasaPresupInvert}"
+                                     style="width:100%" 
+                                     readonly="true"
+                                     rendered="#{CXPBean.tasaInv eq 'Si'}">
+                                     <f:convertNumber pattern="#0,000000000" locale="es"/>
+                        </p:inputText>
+                        <p:message for="tasaCambio2SaveClone" />
+                        
+                        <p:outputLabel for="tasaCambio3Save" value="Tasa de cambio Forecast (Inversa): " 
+                                       rendered="#{CXPBean.tasaInv eq 'Si'}"/>
+                        <p:inputText placeholder="Tasa de cambio 3"
+                                     id="tasaCambio3SaveClone"
+                                     value="#{CXPBean.tasaForecaInvert}"
+                                     style="width:100%"
+                                     readonly="true"
+                                     rendered="#{CXPBean.tasaInv eq 'Si'}">
+                                     <f:convertNumber pattern="#0,000000000" locale="es"/>
+                        </p:inputText>
+                        <p:message for="tasaCambio3SaveClone" />
+                        
+                    </h:panelGrid>
+                    
+                </p:panel>
+                    
+                <p:commandButton value="Guardar" id="btn_puc_save"
+                    action="#{CXPBean.onSelectedOne}" update=":formulario:msgs output"
+                    style="margin-right:20px;" icon="fa fa-save"
+                    oncomplete="handleSubmit(args,'dialogAdd');"/>
+                
+                <p:commandButton onclick="dialogAdd.hide()" class="hidden_button_close" style="display:none !important;"/>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

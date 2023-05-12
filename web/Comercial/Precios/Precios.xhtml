@@ -1,0 +1,247 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Precios</ui:define>
+
+    <ui:define name="viewname">
+        <li>Comercio Exterior</li>
+        <li>/</li>
+        <li><p:link outcome="/Comercial/Precios/Precios">Precios</p:link></li>
+    </ui:define>
+
+    <ui:define name="content">
+
+        <!-- Formulario de subir archivo plano con los precios especificos -->
+        <p:link outcome="Plantilla Excel" value="Plantilla Precios" style="margin-right:20px;" href="../../resources/manuales/PlantillaPrecios.xls">
+            <f:param name="excel" value="20" />
+        </p:link><br /><br />
+        <p:link outcome="Manual de Usuario" value="Manual de Usuario" style="margin-right:20px;" href="../../resources/manuales/RegistrodePrecios.pdf">
+            <f:param name="manual" value="20" />
+        </p:link><br /><br />
+        <h:form enctype="multipart/form-data">
+            <p:growl id="display" showDetail="true" />
+
+            <p:fileUpload fileUploadListener="#{preciosBean.leerArchivo}" mode="advanced" dragDropSupport="false"
+                          fileLimit="1" allowTypes="/(\.|\/)(xls)$/" label="Elegir Archivo" />
+
+            <p:commandButton ajax="false" action="#{preciosBean.subirArchivo}" value="Mostrar precios" />
+        </h:form>
+
+        <h:form id="formulario">
+            <h:outputText value="Tipo de Precio" />
+            <p:selectOneMenu id="tipo_precio_input" value="#{preciosBean.tipoPrecio}" style="width:100%">
+                <f:selectItem itemLabel="Region(B)" itemValue="B" />
+                <f:selectItem itemLabel="Instalacion(D)" itemValue="D" />
+                <f:selectItem itemLabel="Codigo de Cliente(A)" itemValue="A" />
+                <!--Ajax para los eventos change-->
+                <!--****************************-->
+                <!--                <p:ajax event="change" listener="{preciosBean.onChangeNroform}" update=":form_save:output"/>-->
+            </p:selectOneMenu>
+
+            <h:outputText value="Tipo de Moneda" />
+            <p:selectOneMenu id="tipo_moneda_input" value="#{preciosBean.moneda}" style="width:100%">
+                <f:selectItem itemLabel="Dólares (USD)" itemValue="USD" />
+                <f:selectItem itemLabel="Pesos Colombianos (COP)" itemValue="COP" />
+            </p:selectOneMenu>
+
+            <!-- Modal del Formulario de guardar -->
+            <!--*********************************-->
+            <p:panel id="output">
+                <p:panelGrid columns="2">
+                    <p:commandButton value="Agregar" icon="fa fa-plus" action="#{preciosBean.agregarPrefijo}" update="output" />
+                    <p:commandButton value="Remover" icon="fa fa-minus" action="#{preciosBean.removerPrefijo}" update="output" style="margin-left:20px;"/>
+                </p:panelGrid>
+                <ui:repeat var="precios" value="#{preciosBean.preciosNuevaLista}">
+                    <p:growl id="msg" />
+                    <p:panelGrid columns="4">
+                        <p:outputLabel for="metodo" value="Método" />
+                        <p:inputText placeholder="Método"
+                                     id="metodo"
+                                     required="true"
+                                     onblur="value = value.toUpperCase()"
+                                     value="#{precios.tipoPrecio}" />
+
+                        <p:outputLabel for="nroItem" value="Item" />
+                        <p:inputText placeholder="Número de Item o Artículo"
+                                     id="nroItem"
+                                     required="true"
+                                     onblur="value = value.toUpperCase()"
+                                     value="#{precios.item}" />
+
+                        <p:outputLabel for="precioSub" value="RCI" />
+                        <p:inputText placeholder="Pais/Cliente/Instalacion"
+                                     id="precioSub"
+                                     required="true"
+                                     onblur="value = value.toUpperCase()"
+                                     value="#{precios.tipoPrecioSub}" maxlength="6" />
+
+                        <p:outputLabel for="nroPrecio" value="Precio"  />
+                        <p:inputNumber placeholder="Precio"
+                                       id="nroPrecio"
+                                       required="true" minValue="0"
+                                       value="#{precios.precioLista}" />
+
+                        <p:outputLabel for="moneda" value="Moneda"  />
+                        <p:inputText placeholder="Moneda"
+                                     id="moneda"
+                                     required="true"
+                                     value="#{precios.moneda}" />
+
+                        <p:outputLabel />
+                        <p:outputLabel />
+
+                        <p:outputLabel for="fechaIni" value="F. Inicial: " />
+                        <p:calendar id="fechaIni"
+                                    value="#{precios.fechaInicio}"
+                                    navigator="true"
+                                    locale="es"
+                                    pattern="yyyyMMdd"
+                                    required="true" />
+
+                        <p:outputLabel for="fechaFin" value="F. Fin: " />
+                        <p:calendar id="fechaFin"
+                                    value="#{precios.fechaFin}"
+                                    navigator="true"
+                                    locale="es"
+                                    pattern="yyyyMMdd"
+                                    required="true" />
+                        <p:outputLabel for="vencer" value="Vencer Fecha" />
+                        <p:selectBooleanCheckbox id="vencer" value="#{precios.vencer}" />
+                        <p:outputLabel for="inactivar" value="Inactivar Precio" />
+                        <p:selectBooleanCheckbox id="inactivar" value="#{precios.inactivar}" />
+
+                        <p:separator />
+                        <p:separator />
+                        <p:separator />
+                        <p:separator />
+                    </p:panelGrid>
+                </ui:repeat>
+                <p:commandButton value="Guardar" id="btn_save2" action="#{preciosBean.onStoring}"
+                                 style="margin-right:20px;" icon="fa fa-save"/>
+            </p:panel>
+            <p:dialog header="PreciosProductos" widgetVar="dlgPrecios" modal="true"></p:dialog>
+
+            <p:growl id="msgs" showDetail="true"/>
+
+            <p:dataTable id="Prices"  value="#{preciosBean.listaPrecios}" 
+                         emptyMessage="No se encontraron Registros" 
+                         filteredValue="#{preciosBean.filteredListaPrecios}"
+                         var="precios" editable="true" widgetVar="PricesTable"
+                         paginator="true"
+                         rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                         rowsPerPageTemplate="5,10,15" style="margin-bottom:20px">
+
+                <!--** Breadcrumb **-->
+
+                <f:facet name="header">
+                    Lista de Precios
+                </f:facet>
+
+                <f:facet name="{Exporters}">
+                    <div style="float:right;padding-top: 5px;">
+                        <h:commandLink>
+                            <p:graphicImage url="../../resources/img/excel.png" width="24"/>
+                            <p:dataExporter type="xls" target="Prices" fileName="Precios" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <p:graphicImage url="../../resources/img/pdf.png" width="24"/>
+                            <p:dataExporter type="pdf" target="Prices" fileName="Precios"/>
+                        </h:commandLink>
+                    </div>
+                </f:facet>
+
+                <!--** Columnas de la tabla **-->
+
+                <p:column headerText="Producto" filterBy="#{precios.PRKEY1}" sortBy="#{precios.PRKEY1}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{precios.PRKEY1}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{precios.PRKEY1}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="RCI" filterBy="#{precios.PRKEY2}" sortBy="#{precios.PRKEY2}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{precios.PRKEY2}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{precios.PRKEY2}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Vigencia desde" filterBy="#{precios.PSDTE}" sortBy="#{precios.PSDTE}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{precios.PSDTE}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{precios.PSDTE}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Vigencia Hasta" filterBy="#{precios.PSEDT}" sortBy="#{precios.PSEDT}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{precios.PSEDT}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{precios.PSEDT}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Método" filterBy="#{precios.PMETH}" sortBy="#{precios.PMETH}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{precios.PMETH}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{precios.PMETH}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Valor" filterBy="#{precios.PFCT1}" sortBy="#{precios.PFCT1}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output">
+                            <h:outputText value="#{precios.PFCT1}">
+                                <f:convertNumber pattern="#0.00" locale="ger"/>
+                            </h:outputText>
+                        </f:facet>
+                        <f:facet name="input">
+                            <h:inputText id="tasaCambio1Input" value="#{precios.PFCT1}" style="width:96%;">
+                                <f:convertNumber pattern="#0.00" locale="ger"/>
+                            </h:inputText>
+                        </f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <p:column headerText="Moneda" filterBy="#{precios.PCURR}" sortBy="#{precios.PCURR}" filterMatchMode="contains">
+                    <p:cellEditor>
+                        <f:facet name="output"><h:outputText value="#{precios.PCURR}" /></f:facet>
+                        <f:facet name="input"><h:outputText class="output_without_styles" value="#{precios.PCURR}" /></f:facet>
+                    </p:cellEditor>
+                </p:column>
+
+                <!--Eliminar registro boton que diaspara modal y manda los parametros-->
+                <!--*********************************-->
+                <p:column headerText="Acciones" exportable="false">
+                    <p:commandButton oncomplete="PF('dialogDelete').show()" icon="fa fa-trash" title="Inactivar">
+                        <f:setPropertyActionListener value="#{precios}" target="#{preciosBean.selectCxpRow}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <!--Modal del Formulario de Eliminar-->
+        <!--*********************************-->
+
+        <h:form>
+            <p:dialog header="Eliminar Registro" widgetVar="dialogDelete" 
+                      modal="true" showEffect="fade" hideEffect="fade" 
+                      resizable="false">
+                <p:outputPanel id="deleteDetail">
+                    <p:outputLabel value="¿Desea inactivar este registro?" />
+                    <br /><br />
+                    <p:commandButton value="No" type="button" onclick="PF('dialogDelete').hide();" icon="fa fa-close" style="margin-left:10px; float:right !important;"/>
+                    <p:commandButton value="Si" id="btn_modal_delete"
+                                     action="#{preciosBean.onDeleteAcepted}"
+                                     icon="fa fa-check" update=":formulario:Prices,:formulario:msgs"  
+                                     oncomplete="PF('dialogDelete').hide();" style="float:right !important;"/>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

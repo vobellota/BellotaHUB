@@ -1,0 +1,123 @@
+
+#top {
+    position: relative;
+    background-color: #000;
+    color: white;
+    padding: 0px;
+    margin: 0px 0px 10px 0px;
+    background-image: url(../img/head.png);
+    background-repeat: repeat-x;
+    height: 85px;
+    /*width: 1000px;
+    margin: 0 auto;*/
+}
+
+.menu{
+    height: 30px;
+}
+
+.menuItem{
+    color: white;
+    cursor: pointer;
+}
+
+.menuItemActive{
+    cursor: pointer;
+    color: #ffff00; 
+}
+
+.logo{
+    width: 600px;
+    margin: auto;
+    float: left;
+}
+.bienvenido{
+    width: 400px;
+    height:45px;
+    padding-top: 30px;
+    text-align: right;
+    float: left;
+    background-color: transparent;
+    color: white;
+    font-weight: bold;
+}
+
+
+#bottom {
+    position: relative;
+    background-color: #c2dfef;
+    padding: 5px;
+    margin: 10px 0px 0px 0px;
+}
+
+#left {
+    float: left;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+#right {
+    float: right;
+    background-color: #ece3a5;
+    padding: 5px;
+    width: 150px;
+}
+
+.center_content {
+    position: relative;
+    background-color: #dddddd;
+    /*padding: 5px;*/
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.center_contentProf{
+    position: relative;
+    background-color: #dddddd;
+    /*padding: 5px;*/
+    width: 1200px;
+    margin: 0 auto;
+}
+.topContent{
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.left_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin-left: 170px;
+}
+
+.right_content {
+    background-color: #dddddd;
+    padding: 5px;
+    margin: 0px 170px 0px 170px;
+}
+
+#top a:link, #top a:visited {
+    color: white;
+    font-weight : bold;
+    text-decoration: none;
+}
+
+#top a:link:hover, #top a:visited:hover  {
+    color: #ffff00;
+    font-weight : bold;
+    text-decoration : underline;
+}
+
+.footer{
+    font-family: "tahoma";
+    font-size: 8pt;
+    text-align: center;
+    margin-top:70px;
+    margin-left: auto;
+    margin-right: auto;
+    background: #DDD;
+    color: black;
+    width: 1000px;
+}
+
+
