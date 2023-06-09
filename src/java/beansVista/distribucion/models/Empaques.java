@@ -37,6 +37,7 @@ public class Empaques {
     private double embalaje;
     private double peso;
     private double volumen;
+    private String subNroFactura;
 
     public Empaques() {
     }
@@ -221,5 +222,18 @@ public class Empaques {
     public void setVolumen(double volumen) {
         this.volumen = volumen;
     }
+    
+   /**
+     * @return the subNroFactura
+     */
+    public String getSubNroFactura() {
+        return subNroFactura;
+    }
 
+    /**
+     * @param subNroFactura the subNroFactura to set
+     */
+    public void setSubNroFactura(String subNroFactura) {
+        this.subNroFactura = subNroFactura;
+    } 
 }

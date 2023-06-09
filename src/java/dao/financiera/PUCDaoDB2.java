@@ -22,11 +22,11 @@ public class PUCDaoDB2 implements PucDTODao{
     
     public Sesion sesion;
     
-    private final String SQL_INSERT     = "INSERT INTO COLLXUSRF.tblcta VALUES(?,?,?,?,?)";
-    private final String SQL_UPDATE     = "UPDATE COLLXUSRF.tblcta SET CTDESC=?, CTCTYP=?, CTTERC=?, CTINVE=? WHERE CTCTA=?";
-    private final String SQL_DELETE     = "DELETE COLLXUSRF.tblcta WHERE CTCTA=?";
-    private final String SQL_SELECT     = "SELECT CTCTA, CTDESC, CTCTYP, CTTERC, CTINVE FROM COLLXUSRF.tblcta ORDER BY CTCTA DESC";
-    private final String SQL_SELECT_ONE = "SELECT COUNT(*) FROM COLLXUSRF.tblcta WHERE CTCTA =?";
+    private final String SQL_INSERT     = "INSERT INTO |LIBRERIAAUX|.tblcta VALUES(?,?,?,?,?)";
+    private final String SQL_UPDATE     = "UPDATE |LIBRERIAAUX|.tblcta SET CTDESC=?, CTCTYP=?, CTTERC=?, CTINVE=? WHERE CTCTA=?";
+    private final String SQL_DELETE     = "DELETE |LIBRERIAAUX|.tblcta WHERE CTCTA=?";
+    private final String SQL_SELECT     = "SELECT CTCTA, CTDESC, CTCTYP, CTTERC, CTINVE FROM |LIBRERIAAUX|.tblcta ORDER BY CTCTA DESC";
+    private final String SQL_SELECT_ONE = "SELECT COUNT(*) FROM |LIBRERIAAUX|.tblcta WHERE CTCTA =?";
     
     
     public PUCDaoDB2(Sesion conn){
@@ -41,7 +41,7 @@ public class PUCDaoDB2 implements PucDTODao{
         
         try{
             conn = sesion.getConexionBPCS();
-            stmt = conn.prepareStatement(SQL_INSERT);
+            stmt = conn.prepareStatement(SQL_INSERT.replace("|LIBRERIAAUX|", sesion.getLibreriaAux()));
             int index = 1;
             stmt.setString(index++, pucdto.getCtcta());
             stmt.setString(index++, pucdto.getCtdesc());
@@ -66,7 +66,7 @@ public class PUCDaoDB2 implements PucDTODao{
         
         try{
             conn = sesion.getConexionBPCS();
-            stmt = conn.prepareStatement(SQL_UPDATE);
+            stmt = conn.prepareStatement(SQL_UPDATE.replace("|LIBRERIAAUX|", sesion.getLibreriaAux()));
             // Orden de los campos de como estan en el SQL de arriba, el SQL_UPDATE.
             // SET del SQL
             stmt.setString(1, pucdto.getCtdesc());
@@ -93,7 +93,7 @@ public class PUCDaoDB2 implements PucDTODao{
         
         try{
             conn = sesion.getConexionBPCS();
-            stmt = conn.prepareStatement(SQL_DELETE);
+            stmt = conn.prepareStatement(SQL_DELETE.replace("|LIBRERIAAUX|", sesion.getLibreriaAux()));
             // Clausula WHERE para eliminar los registros
             stmt.setString(1, pucdto.getCtcta());
             rows = stmt.executeUpdate();
@@ -111,7 +111,7 @@ public class PUCDaoDB2 implements PucDTODao{
         PreparedStatement stmt = null;
         ResultSet rs = null;
         conn = sesion.getConexionBPCS();
-        stmt = conn.prepareStatement(SQL_SELECT_ONE);
+        stmt = conn.prepareStatement(SQL_SELECT_ONE.replace("|LIBRERIAAUX|", sesion.getLibreriaAux()));
         // Orden de los campos de como estan en el SQL de arriba, el SQL_SELECT_ONE.
         // No se pasa el primer parametro por que esta quemado arriba
         // WHERE del SQL
@@ -131,7 +131,7 @@ public class PUCDaoDB2 implements PucDTODao{
         
         try{
             conn = sesion.getConexionBPCS();
-            stmt = conn.prepareStatement(SQL_SELECT);
+            stmt = conn.prepareStatement(SQL_SELECT.replace("|LIBRERIAAUX|", sesion.getLibreriaAux()));
             rs   = stmt.executeQuery();
             while(rs.next()){
                 // Asignacion de variables OP

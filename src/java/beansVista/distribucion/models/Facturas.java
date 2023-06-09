@@ -36,6 +36,7 @@ public class Facturas {
     private int estado;
      private List<Lios> listaLiosExluidos = new ArrayList<>();
     private String correo;
+    private String subNroFactura;
     // private ProductosCompatibles productoCompatible;
 
     /**
@@ -84,12 +85,13 @@ public class Facturas {
         this.estado = 0;
     }
 
-    public Facturas(int idListaEmpaque, String idFacturaAS, String prefijo, String nroFactura, String descripcionCliente, String idCliente, Date fecha, String origen, 
+    public Facturas(int idListaEmpaque, String idFacturaAS, String prefijo, String nroFactura, String subnroFactura, String descripcionCliente, String idCliente, Date fecha, String origen, 
             String destino, String direccion, int totalPaquetes, double pesoTotal, double volumenTotal, List<Lios> listaLios, String telefono, String correo) {
         this.idListaEmpaque = idListaEmpaque;
         this.idFacturaAS = idFacturaAS;
         this.prefijo = prefijo;
         this.nroFactura = nroFactura;
+        this.subNroFactura = subnroFactura;
         this.descripcionCliente = descripcionCliente;
         this.idCliente = idCliente;
         this.fecha = fecha;
@@ -102,23 +104,24 @@ public class Facturas {
         this.listaLios = listaLios;
         this.estado = 0;
         this.telefono = telefono;
-        this.correo = correo;
-        
+        this.correo = correo;        
     }
 
-    public Facturas(int idListaEmpaque, String idFacturaAS, String prefijo, String nroFactura, List<Lios> listaLios) {
+    public Facturas(int idListaEmpaque, String idFacturaAS, String prefijo, String nroFactura, String subnroFactura, List<Lios> listaLios) {
         this.idListaEmpaque = idListaEmpaque;
         this.idFacturaAS = idFacturaAS;
         this.prefijo = prefijo;
         this.nroFactura = nroFactura;
+        this.subNroFactura = subnroFactura;
         this.listaLios = listaLios;
         this.estado = 0;
     }
 
-    public Facturas(String idFacturaAS, String prefijo, String nroFactura, List<Lios> listaLios, String descripcionCliente, String idCliente, Date fecha, String origen, String destino, String direccion, int totalPaquetes) {
+    public Facturas(String idFacturaAS, String prefijo, String nroFactura, String subnroFactura, List<Lios> listaLios, String descripcionCliente, String idCliente, Date fecha, String origen, String destino, String direccion, int totalPaquetes) {
         this.idFacturaAS = idFacturaAS;
         this.prefijo = prefijo;
         this.nroFactura = nroFactura;
+        this.subNroFactura = subnroFactura;
         this.listaLios = listaLios;
         this.descripcionCliente = descripcionCliente;
         this.idCliente = idCliente;
@@ -130,11 +133,12 @@ public class Facturas {
         this.estado = 0;
     }
 
-    public Facturas(String idFacturaAS, String prefijo, String nroFactura, List<Lios> listaLios, List<Lios> listaLiosAgrupada, String descripcionCliente, String idCliente, Date fecha, 
+    public Facturas(String idFacturaAS, String prefijo, String nroFactura, String subnroFactura, List<Lios> listaLios, List<Lios> listaLiosAgrupada, String descripcionCliente, String idCliente, Date fecha, 
             String origen, String destino, String direccion, int totalPaquetes, double pesoTotal, double volumenTotal, String telefono, String correo) {
         this.idFacturaAS = idFacturaAS;
         this.prefijo = prefijo;
         this.nroFactura = nroFactura;
+        this.subNroFactura = subnroFactura;
         this.listaLios = listaLios;
         this.listaLiosAgrupada = listaLiosAgrupada;
         this.descripcionCliente = descripcionCliente;
@@ -376,4 +380,18 @@ public class Facturas {
     public void setCorreo(String correo) {
         this.correo = correo;
     }
+    
+       /**
+     * @return the subNroFactura
+     */
+    public String getSubNroFactura() {
+        return subNroFactura;
+    }
+
+    /**
+     * @param subNroFactura the subNroFactura to set
+     */
+    public void setSubNroFactura(String subNroFactura) {
+        this.subNroFactura = subNroFactura;
+    } 
 }

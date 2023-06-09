@@ -276,7 +276,7 @@ public class ListasEmpaqueBusinessBean implements IListasEmpaqueBusinessBean {
                         if (listaLiosAux.size() > 0) {
                             if (listaLiosAux.get(0).size() > 0) {
                                 Facturas fac = this.mtdGetBillHeader(listaEmpaqueSeleccionada.get(i));
-                                    listFacturasAux.add(new Facturas(fac.getIdFacturaAS(), fac.getPrefijo(), fac.getNroFactura(), listaLiosAux.get(0), listaLiosAux.get(1), fac.getDescripcionCliente(), fac.getIdCliente(), 
+                                    listFacturasAux.add(new Facturas(fac.getIdFacturaAS(), fac.getPrefijo(), fac.getNroFactura(), fac.getSubNroFactura(),listaLiosAux.get(0), listaLiosAux.get(1), fac.getDescripcionCliente(), fac.getIdCliente(), 
                                             fac.getFecha(), "MANIZALES - CALDAS", fac.getDestino(), fac.getDireccion(), listaLiosAux.get(0).get(listaLiosAux.get(0).size() - 1).getIdLio(), fac.getPesoTotal(), 
                                             fac.getVolumenTotal(), fac.getTelefono(), fac.getCorreo()));
                             }

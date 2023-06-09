@@ -51,6 +51,7 @@ public class ListasEmpaqueFac {
     private String prefijo;
     private String nroFactura;
     private int estado = -1;
+    private String subNroFactura;
      private List<String> listaLios = new ArrayList<>();
     // Encapsulamiento de las variables
     // ********************************
@@ -130,6 +131,18 @@ public class ListasEmpaqueFac {
     public void setListaLios(List<String> listaLios) {
         this.listaLios = listaLios;
     }
-    
-    
+
+    /**
+     * @return the subNroFactura
+     */
+    public String getSubNroFactura() {
+        return subNroFactura;
+    }
+
+    /**
+     * @param subNroFactura the subNroFactura to set
+     */
+    public void setSubNroFactura(String subNroFactura) {
+        this.subNroFactura = subNroFactura;
+    }    
 }

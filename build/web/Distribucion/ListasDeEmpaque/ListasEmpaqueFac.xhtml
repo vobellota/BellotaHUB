@@ -28,9 +28,9 @@
         <h:form id="form_send_real">
 
             <p:panel>
-                <p:fieldset legend="Buscar por Rango de Facturas" style="margin-bottom:20px">
+                <p:fieldset legend="Buscar por Rango de Ordenes" style="margin-bottom:20px">
                     <p:panelGrid columns="2" style="display:inline-block;" layout="grid">
-                        <p:outputLabel for="prefijoFactura" value="Prefijo de Factura: " />
+                        <p:outputLabel for="prefijoFactura" value="Prefijo de Orden: " />
                         <p:selectOneMenu id="prefijoFactura" value="#{ListasEmpaqueFacBean.prefijoFactura}" style="width:100%">
                             <f:selectItem itemLabel="CN" itemValue="CN" />
                             <f:selectItem itemLabel="CD" itemValue="CD" />
@@ -82,7 +82,7 @@
 
         <h:form id="form_listado">
             <p:panel>
-                <p:fieldset legend="Listado de Facturas" style="margin-bottom:20px">
+                <p:fieldset legend="Listado de Ordenes" style="margin-bottom:20px">
                     <p:dataTable var="listas" value="#{ListasEmpaqueFacBean.listaEmpaqueConsultada}" id="datatableasdfasd" editable="true" editMode="cell" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
                                  {PageLinks} {NextPageLink} {LastPageLink} {Exporters1} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="5,10,15,20,25,30,35,40,45,50">
@@ -95,8 +95,12 @@
                             <p:selectBooleanCheckbox value="#{ListasEmpaqueFacBean.checked[listas]}" label="Basic"/>
                         </p:column>
 
-                        <p:column headerText="Factura">
+                        <p:column headerText="Orden">
                             <h:outputText value="#{listas.factura}" />
+                        </p:column>
+                        
+                        <p:column headerText="SubOrden">
+                            <h:outputText value="#{listas.subNroFactura}" />
                         </p:column>
 
                         <p:column headerText="Cliente">
@@ -170,7 +174,7 @@
                         </f:facet>   
                         <p:column>
                             <p:row  style="height:  100px">
-                                <p:panel id="pnl-pr-toggleable" header="Factura" toggleable="true" toggleSpeed="500" closeSpeed="500" widgetVar="panel">
+                                <p:panel id="pnl-pr-toggleable" header="Orden" toggleable="true" toggleSpeed="500" closeSpeed="500" widgetVar="panel">
                                     <p:panelGrid  id="gridLios">
                                         <p:row>
                                             <p:column >
@@ -254,7 +258,7 @@
                                         </p:row>
                                         <p:row>
                                             <p:column>
-                                                <h:outputText value="Factura" />
+                                                <h:outputText value="Orden" />
                                             </p:column>
                                             <p:column>
                                                 <h:outputText value="#{listafacturas.idFacturaAS}" />
@@ -264,6 +268,14 @@
                                             </p:column>
                                             <p:column>
                                                 <h:outputText value="#{listafacturas.idListaEmpaque}" />
+                                            </p:column>
+                                        </p:row>
+                                        <p:row>
+                                            <p:column colspan="2">
+                                                <h:outputText value="SubOrden" />
+                                            </p:column>
+                                            <p:column colspan="2">
+                                                <h:outputText value="#{listafacturas.subNroFactura}" />
                                             </p:column>
                                         </p:row>
                                         <p:row>

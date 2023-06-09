@@ -68,6 +68,7 @@ public class Sesion implements Serializable {
     private transient HashMap<String, Object> parametros = new HashMap<String, Object>();
     private String token = "";
     private String iss = "";
+    private String libreriaAux;
 
     public ArrayList<FacesMessage> getMensajePendientes() {
         return mensajePendientes;
@@ -154,6 +155,7 @@ public class Sesion implements Serializable {
             String clave = rb.getString("claveBPCS");
             String server = rb.getString("servidor");
             String libreria = rb.getString("libreria");
+            libreriaAux = rb.getString("libreriaAux");
             Datos datos = new Datos();
             try {
                 conexionBPCS = datos.db2Conection(user, clave, server, libreria);
@@ -202,7 +204,7 @@ public class Sesion implements Serializable {
             String clientSecretKEYCLOAK = rb.getString("clientSecretKEYCLOAK");
             String scopeKEYCLOAKLogin = rb.getString("scopeKEYCLOAKLogin");
             String responseTypeKEYCLOAKLogin = rb.getString("responseTypeKEYCLOAKLogin");
-
+            libreriaAux = rb.getString("libreriaAux");
             OkHttpClient client = new OkHttpClient();
             MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
             RequestBody body = RequestBody.create(mediaType, "grant_type=" + grantTypeKEYCLOAKLogin
@@ -389,6 +391,13 @@ public class Sesion implements Serializable {
 
     public void setIss(String iss) {
         this.iss = iss;
+    }
+
+    /**
+     * @return the libreriaAux
+     */
+    public String getLibreriaAux() {
+        return libreriaAux;
     }
     
     

@@ -53,6 +53,7 @@ public class ListasEmpaqueFacCabecera {
     private String nroFactura;
     private String telefono;
     private String correo;
+    private String subNroFactura;
     // Encapsulamiento de las variables
     // ********************************
     
@@ -152,4 +153,17 @@ public class ListasEmpaqueFacCabecera {
         this.correo = correo;
     }
 
+       /**
+     * @return the subNroFactura
+     */
+    public String getSubNroFactura() {
+        return subNroFactura;
+    }
+
+    /**
+     * @param subNroFactura the subNroFactura to set
+     */
+    public void setSubNroFactura(String subNroFactura) {
+        this.subNroFactura = subNroFactura;
+    } 
 }

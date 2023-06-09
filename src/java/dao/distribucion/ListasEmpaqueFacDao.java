@@ -48,78 +48,72 @@ public class ListasEmpaqueFacDao {
     public Sesion sesion;
     ExceptionDataOperationDao exceptionPOSTGRES;
 
-    private final String SQL_SELECT_RANGE = "SELECT T2.prefijo, T2.nrofac, T2.nombreclien, T2.destino, T2.catidadlineas, T2.peso_unitario, T2.volumen FROM\n" +
-                        "(SELECT S.CHPREF AS prefijo, S.HORD AS nrofac, R.CNME AS nombreclien, P.PCLCTN AS destino, S.HLINS AS catidadlineas,\n" +
+    private final String SQL_SELECT_RANGE = "SELECT T2.prefijo, T2.nrofac, T2.nombreclien, T2.destino, T2.catidadlineas, T2.peso_unitario, T2.volumen, T2.IDTRX FROM\n" +
+                        "(SELECT S.CHPREF AS prefijo, S.HORD AS nrofac, R.CNME AS nombreclien, P.PCLCTN AS destino, S.HLINS AS catidadlineas, LE.IDTRX\n" +
                         "SUM (I.IWGHT* L.LQORD / I.IVULP) AS peso_unitario, SUM(COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG * L.LQORD ) / I.IVULP , 0)) AS volumen\n" +
                         "FROM ECH S\n" +
                         "INNER JOIN RCM R ON R.CCUST = S.HCUST\n" +
                         "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                         "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
                         "INNER JOIN LPC P ON R.CZIP = P.PCPSCD\n" +
-                        "INNER JOIN COLLXUSRF.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                        "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
                         "WHERE LE.FECHAORDEN BETWEEN ? AND ? \n" +
-                        "GROUP BY S.CHPREF, S.HORD, R.CNME, LE.FECHAORDEN, S.HCUST, P.PCLCTN, S.HLINS)T2\n" +
+                        "GROUP BY S.CHPREF, S.HORD, R.CNME, LE.FECHAORDEN, S.HCUST, P.PCLCTN, S.HLINS,LE.IDTRX)T2\n" +
                         "ORDER BY T2.prefijo,T2.nrofac ASC";
 
-    /*private String SQL_SELECT_ITEMS_ORDER = "SELECT S.IHDPFX, S.SIINVN, I.IDESC, I.IPROD, L.ILQTY "
-            + "FROM SIH S\n"
-            + "INNER JOIN SIL L\n"
-            + "ON L.ILCUST=S.SICUST AND L.ILDPFX=S.IHDPFX AND L.ILDOCN=S.IHDOCN AND L.ILDYR=S.IHDYR AND L.ILDTYP=S.IHDTYP\n"
-            + "INNER JOIN IIM I\n"
-            + "ON I.IPROD = L.ILPROD\n"
-            + "WHERE S.IHDTYP IN (1,2)";*/
-    private String SQL_SELECT_ITEMS_ORDER = "SELECT T2.CHPREF, T2.FECHAORDEN, T2.IDESC, T2.IPROD, T2.LQORD, T2.PESO, T2.VOLUMEN  FROM\n" +
+   
+    private String SQL_SELECT_ITEMS_ORDER = "SELECT T2.CHPREF, T2.FECHAORDEN, T2.IDESC, T2.IPROD, T2.LQORD, T2.PESO, T2.VOLUMEN, T2.IDTRX FROM\n" +
                     "(SELECT S.CHPREF, VARCHAR_FORMAT(LE.FECHAORDEN, 'YYYYMMDD') AS FECHAORDEN, I.IDESC, I.IPROD, L.LQORD,\n" +
-                    "(I.IWGHT) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE  I.IVULP END) AS PESO, COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG ) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE  I.IVULP END) , 0) AS VOLUMEN\n" +
+                    "(I.IWGHT) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE  I.IVULP END) AS PESO, COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG ) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE  I.IVULP END) , 0) AS VOLUMEN, LE.IDTRX\n" +
                     "FROM ECH S\n" +
                     "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                     "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                    "INNER JOIN COLLXUSRF.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
-                    "LEFT JOIN COLLXUSRF.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
+                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                    "LEFT JOIN |LIBRERIAAUX|.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
                     "WHERE C.CODITEMBILLED IS NULL\n" +
                     "AND S.HDTYP IN (1,2)\n" +
-                    "AND S.HORD =? AND S.CHPREF =?\n" +
+                    "AND S.HORD =? AND S.CHPREF =? AND LE.IDTRX =?\n" +
                     "UNION ALL\n" +
                     "SELECT T1.CHPREF, T1.FECHAORDEN, TRIM(T1.PRODOR) || ' - ' || TRIM(I.IDESC) AS IDESC, I.IPROD, T1.LQORD,\n" +
-                    "(I.IWGHT) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE  I.IVULP END) AS PESO, COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE  I.IVULP END) , 0) AS VOLUMEN\n" +
+                    "(I.IWGHT) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE  I.IVULP END) AS PESO, COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE  I.IVULP END) , 0) AS VOLUMEN, T1.IDTRX\n" +
                     "FROM\n" +
-                    "(SELECT  C.CODITEMPACKAGED AS IPROD, S.CHPREF, VARCHAR_FORMAT(LE.FECHAORDEN, 'YYYYMMDD') AS FECHAORDEN, L.LQORD, (SELECT T0.IDESC FROM IIM T0 WHERE T0.IPROD = C.CODITEMBILLED) AS PRODOR\n" +
+                    "(SELECT  C.CODITEMPACKAGED AS IPROD, S.CHPREF, VARCHAR_FORMAT(LE.FECHAORDEN, 'YYYYMMDD') AS FECHAORDEN, L.LQORD, (SELECT T0.IDESC FROM IIM T0 WHERE T0.IPROD = C.CODITEMBILLED) AS PRODOR, LE.IDTRX\n" +
                     "FROM ECH S\n" +
                     "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                     "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                    "INNER JOIN COLLXUSRF.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD\n" +
-                    "INNER JOIN COLLXUSRF.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
+                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD\n" +
+                    "INNER JOIN |LIBRERIAAUX|.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
                     "WHERE\n" +
                     "S.HDTYP IN (1,2)\n" +
-                    "AND S.HORD =? AND S.CHPREF =?\n" +
+                    "AND S.HORD =? AND S.CHPREF =? AND LE.IDTRX =?\n" +
                     ") T1\n" +
                     "INNER JOIN IIM I ON I.IPROD = T1.IPROD\n" +
                     ") T2\n" +
                     "ORDER BY T2.CHPREF, T2.FECHAORDEN, T2.IDESC ASC";
 
-    private String SQL_SELECT_ITEMS_ORDER_EXCLUDES = "SELECT T2.CHPREF, T2.FECHAORDEN, T2.IDESC, T2.IPROD, T2.LQORD, T2.PESO, T2.VOLUMEN  FROM\n" +
+    private String SQL_SELECT_ITEMS_ORDER_EXCLUDES = "SELECT T2.CHPREF, T2.FECHAORDEN, T2.IDESC, T2.IPROD, T2.LQORD, T2.PESO, T2.VOLUMEN, T2.IDTRX FROM\n" +
                     "(SELECT S.CHPREF, VARCHAR_FORMAT(LE.FECHAORDEN, 'YYYYMMDD') AS FECHAORDEN, I.IDESC, I.IPROD, L.LQORD,\n" +
-                    "(I.IWGHT) / (CASE WHEN I.IVULP IS NULL OR I.IVULP = 0 THEN 1 ELSE I.IVULP END) AS PESO, COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE I.IVULP END), 0) AS VOLUMEN\n" +
+                    "(I.IWGHT) / (CASE WHEN I.IVULP IS NULL OR I.IVULP = 0 THEN 1 ELSE I.IVULP END) AS PESO, COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE I.IVULP END), 0) AS VOLUMEN, LE.IDTRX\n" +
                     "FROM ECH S\n" +
                     "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                     "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                    "INNER JOIN COLLXUSRF.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
-                    "LEFT JOIN COLLXUSRF.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
+                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                    "LEFT JOIN |LIBRERIAAUX|.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
                     "WHERE C.CODITEMBILLED IS NULL\n" +
                     "AND S.HDTYP IN (1,2)\n" +
-                    "AND S.HORD =? AND S.CHPREF =?\n" +
+                    "AND S.HORD =? AND S.CHPREF =? AND LE.IDTRX =?\n" +
                     "UNION ALL\n" +
                     "SELECT T1.CHPREF, T1.FECHAORDEN, TRIM(T1.PRODOR) || ' - ' || TRIM(I.IDESC) AS IDESC, I.IPROD, T1.LQORD,\n" +
-                    "(I.IWGHT ) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE I.IVULP END) AS PESO, COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE I.IVULP END), 0) AS VOLUMEN\n" +
+                    "(I.IWGHT ) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE I.IVULP END) AS PESO, COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG) / (CASE WHEN I.IVULP IS NULL OR  I.IVULP = 0 THEN 1 ELSE I.IVULP END), 0) AS VOLUMEN, T1.IDTRX\n" +
                     "FROM\n" +
-                    "(SELECT  C.CODITEMPACKAGED AS IPROD, S.CHPREF, VARCHAR_FORMAT(LE.FECHAORDEN, 'YYYYMMDD') AS FECHAORDEN, L.LQORD, (SELECT T0.IDESC FROM IIM T0 WHERE T0.IPROD = C.CODITEMBILLED) AS PRODOR\n" +
+                    "(SELECT  C.CODITEMPACKAGED AS IPROD, S.CHPREF, VARCHAR_FORMAT(LE.FECHAORDEN, 'YYYYMMDD') AS FECHAORDEN, L.LQORD, (SELECT T0.IDESC FROM IIM T0 WHERE T0.IPROD = C.CODITEMBILLED) AS PRODOR, LE.IDTRX\n" +
                     "FROM ECH S\n" +
                     "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                     "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                    "INNER JOIN COLLXUSRF.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
-                    "INNER JOIN COLLXUSRF.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
+                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                    "INNER JOIN |LIBRERIAAUX|.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
                     "WHERE\n" +
-                    "S.HDTYP IN (1,2) AND S.HORD =? AND S.CHPREF =?\n" +
+                    "S.HDTYP IN (1,2) AND S.HORD =? AND S.CHPREF =? AND LE.IDTRX =?\n" +
                     ") T1\n" +
                     "INNER JOIN IIM I ON I.IPROD = T1.IPROD\n" +
                     ") T2 WHERE TRIM(T2.IPROD) IN (|VARARRAYID|)\n" +
@@ -137,20 +131,20 @@ public class ListasEmpaqueFacDao {
     private String SQL_SELECT_BILL_HEADER = "SELECT T0.HCUST ,T0.HNAME ,T0.FECHAORDEN, T0.HPOST ,T0.HAD\n" +
                 ",SUM(T0.IWGHT * T0.LQORD / T0.IVULP) AS PESO\n" +
                 ",SUM(COALESCE((T0.IMHIGH * T0.IMWIDE * T0.IMLONG * T0.LQORD ) / T0.IVULP , 0)) AS VOLUMEN,\n" +
-                "TRIM(T0.PCLCTN) || ' - ' ||  T0.CCDESC AS CCDESC,  T0.CHFAX AS SIPHONE, T0.CHDATN AS SIMAIL \n" +
+                "TRIM(T0.PCLCTN) || ' - ' ||  T0.CCDESC AS CCDESC,  T0.CHFAX AS SIPHONE, T0.CHDATN AS SIMAIL, T0.IDTRX \n" +
                 "FROM (              \n" +
                 "SELECT S.HCUST ,TRIM(S.HNAME) AS HNAME ,VARCHAR_FORMAT(LE.FECHAORDEN, 'YYYYMMDD') AS FECHAORDEN,CONCAT(CONCAT(TRIM(S.HPOST), ' - '),TRIM(R.CSTE)) AS HPOST\n" +
                 ",CONCAT(CONCAT(CONCAT(CONCAT(TRIM(S.HAD1),' '), TRIM(S.HAD2)), ' '), TRIM(S.HAD3)) AS HAD, TRIM(Z.CCDESC) AS CCDESC\n" +
-                ",I.IWGHT ,L.LQORD ,I.IVULP ,I.IMHIGH ,I.IMWIDE ,I.IMLONG,M.PCLCTN, S.CHFAX, S.CHDATN\n" +
+                ",I.IWGHT ,L.LQORD ,I.IVULP ,I.IMHIGH ,I.IMWIDE ,I.IMLONG,M.PCLCTN, S.CHFAX, S.CHDATN, LE.IDTRX\n" +
                 "FROM ECH S\n" +
                 "INNER JOIN  RCM R ON (S.HCUST=R.CCUST)\n" +
                 "INNER JOIN ECL L ON L.LORD = S.HORD\n" +
                 "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                "INNER JOIN COLLXUSRF.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
                 "LEFT JOIN ZCC Z ON (Z.CCCODE = R.CSTE AND Z.CCTABL = 'STATE')\n" +
                 "INNER JOIN LPC M ON M.PCPSCD = S.HPOST\n" +
-                "WHERE S.HORD =? AND S.CHPREF =?) T0\n" +
-                "GROUP BY T0.HCUST ,T0.HNAME ,T0.FECHAORDEN, T0.HPOST, T0.HAD, T0.CCDESC, T0.CHFAX, T0.CHDATN, T0.PCLCTN";
+                "WHERE S.HORD =? AND S.CHPREF =? AND LE.IDTRX =?) T0\n" +
+                "GROUP BY T0.HCUST ,T0.HNAME ,T0.FECHAORDEN, T0.HPOST, T0.HAD, T0.CCDESC, T0.CHFAX, T0.CHDATN, T0.PCLCTN, T0.IDTRX";
 
     private String SQL_SELECT_UNITIES_PRODUCTS = "SELECT DISTINCT(u.codigo_producto) AS codigo_producto, u.cantidad,"
             + " u.descripcion, u.cantidad_descrita, u.id_grupo_compatible, u.id_estiba_asignada FROM  distribucion.unidades_empaque u INNER JOIN "
@@ -160,8 +154,8 @@ public class ListasEmpaqueFacDao {
 
     private final String SQL_INSERT_LIST_PACKAGE_HEADER = "INSERT INTO distribucion.lista_empaque_cabecera \n"
             + "(idfacturaas, prefijo, nrofactura, descripcioncliente, idcliente, fecha, origen, destino, \n"
-            + "direccion, totalpaquetes, pesototal, volumentotal, comentario, estado, telefono, correo) \n"
-            + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING idlistaempaque";
+            + "direccion, totalpaquetes, pesototal, volumentotal, comentario, estado, telefono, correo, subnrofactura) \n"
+            + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING idlistaempaque";
 
     private final String SQL_INSERT_LIST_PACKAGE_DETAILS = "INSERT INTO distribucion.lista_empaque_detalle \n"
             + "(idlistaempaque, idlio, embalaje, idempaque, idgrupo, idproducto, productodescripcion, \n"
@@ -180,17 +174,17 @@ public class ListasEmpaqueFacDao {
             + "grupodescripcion, codigoproducto, idunidadempaque, unidadempaquedescripcion, estado,peso,volumen) \n"
             + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) RETURNING idlinealistaempaque";
 
-    private final String SQL_SELECT_BILL_STATE = "SELECT idlistaempaque,estado FROM distribucion.lista_empaque_cabecera WHERE nrofactura = ? AND prefijo = ? ORDER BY idlistaempaque DESC LIMIT 1";
+    private final String SQL_SELECT_BILL_STATE = "SELECT idlistaempaque,estado FROM distribucion.lista_empaque_cabecera WHERE nrofactura = ? AND prefijo = ? AND subnrofactura = ? ORDER BY idlistaempaque DESC LIMIT 1";
 
     private final String SQL_SELECT_BILL_LINES_STATE = "SELECT d.* FROM distribucion.lista_empaque_detalle_excluidos d\n"
             + "INNER JOIN distribucion.lista_empaque_cabecera c ON d.idlistaempaque = c.idlistaempaque  \n"
             + "WHERE d.idlistaempaque = ? AND c.estado = 1 AND d.estado = 1 ORDER BY idempaque";
 
-    private final String SQL_SELECT_BILL_HEADER_CREATED = "SELECT * FROM distribucion.lista_empaque_cabecera WHERE nrofactura = ? AND prefijo = ? ";
+    private final String SQL_SELECT_BILL_HEADER_CREATED = "SELECT * FROM distribucion.lista_empaque_cabecera WHERE nrofactura = ? AND prefijo = ? AND subnrofactura = ? ";
 
     private final String SQL_SELECT_BILL_LINES_CREATED = "SELECT * FROM distribucion.lista_empaque_detalle WHERE idlistaempaque = ? ORDER BY idempaque";
 
-    private final String SQL_UPDATE_BILL_STATE_CHANGE = "UPDATE distribucion.lista_empaque_cabecera SET estado = ?, totalpaquetes=? WHERE nrofactura = ? AND prefijo = ?";
+    private final String SQL_UPDATE_BILL_STATE_CHANGE = "UPDATE distribucion.lista_empaque_cabecera SET estado = ?, totalpaquetes=? WHERE nrofactura = ? AND prefijo = ? AND subnrofactura = ? ";
 
     private final String SQL_UPDATE_BILL_COMMENT = "UPDATE distribucion.lista_empaque_cabecera SET comentario = ? WHERE idlistaEmpaque = ?";
 
@@ -232,15 +226,15 @@ public class ListasEmpaqueFacDao {
             // Variables del condicional del WHERE 
             // ***********************************
 
-            String condicion = "SELECT T2.prefijo, T2.nrofac, T2.nombreclien, T2.destino, T2.catidadlineas, T2.peso_unitario, T2.volumen FROM\n" +
-                                "(SELECT S.CHPREF AS prefijo, S.HORD AS nrofac, R.CNME AS nombreclien, P.PCLCTN AS destino, S.HLINS AS catidadlineas,\n" +
+            String condicion = "SELECT T2.prefijo, T2.nrofac, T2.nombreclien, T2.destino, T2.catidadlineas, T2.peso_unitario, T2.volumen, T2.IDTRX FROM\n" +
+                                "(SELECT S.CHPREF AS prefijo, S.HORD AS nrofac, R.CNME AS nombreclien, P.PCLCTN AS destino, S.HLINS AS catidadlineas, LE.IDTRX,\n" +
                                 "SUM (I.IWGHT* L.LQORD / I.IVULP) AS peso_unitario, SUM(COALESCE((I.IMHIGH * I.IMWIDE * I.IMLONG * L.LQORD ) / I.IVULP , 0)) AS volumen\n" +
                                 "FROM ECH S\n" +
                                 "INNER JOIN RCM R ON R.CCUST = S.HCUST\n" +
                                 "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                                 "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
                                 "INNER JOIN LPC P ON R.CZIP = P.PCPSCD\n" +
-                                "INNER JOIN COLLXUSRF.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                                "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
                                 "WHERE S.CHPREF = '" + prefijoFactura + "' AND S.CHUTYP NOT IN ('V','7')";
 
             if (enteronumeroInicial != null && enteronumeroFinal != null) {
@@ -250,9 +244,9 @@ public class ListasEmpaqueFacDao {
                 condicion = condicion + " AND VARCHAR_FORMAT(LE.FECHAORDEN, 'YYYYMMDD') BETWEEN '" + enterofechaInicio + "' AND '" + enterofechaFin + "'";
             }
 
-            condicion = condicion + " GROUP BY S.CHPREF, S.HORD, R.CNME, LE.FECHAORDEN, S.HCUST, P.PCLCTN, S.HLINS)T2\n" +
+            condicion = condicion + " GROUP BY S.CHPREF, S.HORD, R.CNME, LE.FECHAORDEN, S.HCUST, P.PCLCTN, S.HLINS, LE.IDTRX)T2\n" +
                         "ORDER BY T2.prefijo,T2.nrofac ASC";
-
+            condicion = condicion.replace("|LIBRERIAAUX|", sesion.getLibreriaAux());
             stmt = conn.prepareStatement(condicion);
 
             rs = stmt.executeQuery();
@@ -268,6 +262,7 @@ public class ListasEmpaqueFacDao {
                 listaempafa.setNroLineas(rs.getInt(5));
                 listaempafa.setPeso(rs.getDouble(6));
                 listaempafa.setVolumen(rs.getDouble(7));
+                listaempafa.setSubNroFactura(rs.getString(8));
                 listasemapquefac.add(listaempafa);
             }
 
@@ -285,7 +280,7 @@ public class ListasEmpaqueFacDao {
      * los ítems simples son consultados directamente en la tabla IIM de BPCS y
      * los ítems compuestos son las piezas de un ítem como carretillas, los
      * ítems compuestos se consultan de la tabla IIM de BPCS cruzándola con la
-     * tabla de usuario COLLXUSRF.LEITEMSCOMPOSED la cual almacena el
+     * tabla de usuario |LIBRERIAAUX|.LEITEMSCOMPOSED la cual almacena el
      * identificador del ítem compuesto y el identificador de sus piezas.
      *
      * @author Camilo Rojas
@@ -301,15 +296,11 @@ public class ListasEmpaqueFacDao {
         ResultSet rs = null;
         int iax = 0;
         List<Empaques> listasEmpaqueAux = new ArrayList<Empaques>();
-        //String SQL_SELECT_ITEMS_ORDER_AUX = this.SQL_SELECT_ITEMS_ORDER + " AND S.SIINVN ='" + empaqueFacAux.getNroFactura() + "' AND S.IHDPFX ='" + empaqueFacAux.getPrefijo() + "' ORDER BY S.IHDPFX, S.SIINVN, I.IPROD DESC";
-        /*    String SQL_SELECT_ITEMS_ORDER_AUX = this.SQL_SELECT_ITEMS_ORDER;
-        SQL_SELECT_ITEMS_ORDER_AUX = SQL_SELECT_ITEMS_ORDER_AUX.replace("|VARIDDOC|", empaqueFacAux.getNroFactura());
-        SQL_SELECT_ITEMS_ORDER_AUX = SQL_SELECT_ITEMS_ORDER_AUX.replace("|VARIDPRE|", empaqueFacAux.getPrefijo());
-         */
         try {
             conn = sesion.getConexionBPCS();
             if (empaqueFacAux.getListaLios().size() > 0) {
                 String SQL_SELECT_ITEMS_ORDER_AUX = this.SQL_SELECT_ITEMS_ORDER_EXCLUDES.replace("|VARARRAYID|", this.countIdInArray(empaqueFacAux.getListaLios()));
+                SQL_SELECT_ITEMS_ORDER_AUX = SQL_SELECT_ITEMS_ORDER_AUX.replace("|LIBRERIAAUX|", sesion.getLibreriaAux());
                 stmt = conn.prepareStatement(SQL_SELECT_ITEMS_ORDER_AUX);
                 int itId = 5;
                 for (int i = 0; i < empaqueFacAux.getListaLios().size(); i++) {
@@ -318,14 +309,16 @@ public class ListasEmpaqueFacDao {
                 }
                 itId = 5;
             } else {
-                stmt = conn.prepareStatement(this.SQL_SELECT_ITEMS_ORDER);
+                stmt = conn.prepareStatement(this.SQL_SELECT_ITEMS_ORDER.replace("|LIBRERIAAUX|", sesion.getLibreriaAux()));
             }
 
             // Clausula WHERE para el eliminar los registros
             stmt.setString(1, empaqueFacAux.getNroFactura());
             stmt.setString(2, empaqueFacAux.getPrefijo());
-            stmt.setString(3, empaqueFacAux.getNroFactura());
-            stmt.setString(4, empaqueFacAux.getPrefijo());
+            stmt.setString(3, empaqueFacAux.getSubNroFactura());
+            stmt.setString(4, empaqueFacAux.getNroFactura());
+            stmt.setString(5, empaqueFacAux.getPrefijo());
+            stmt.setString(6, empaqueFacAux.getSubNroFactura());
 
             rs = stmt.executeQuery();
 
@@ -352,6 +345,7 @@ public class ListasEmpaqueFacDao {
                 empaque.setUnidad(1);*/
                     empaque.setPrefijo(rs.getString(1));
                     empaque.setNroFactura(rs.getString(2));
+                    empaque.setSubNroFactura(rs.getString(8));
                     listasEmpaqueAux.add(empaque);
                     iax++;
                 } catch (Exception ddilefsib001) {
@@ -478,10 +472,11 @@ public class ListasEmpaqueFacDao {
         Facturas billAux = new Facturas();
         try {
             conn = sesion.getConexionBPCS();
-            stmt = conn.prepareStatement(SQL_SELECT_BILL_HEADER);
+            stmt = conn.prepareStatement(SQL_SELECT_BILL_HEADER.replace("|LIBRERIAAUX|", sesion.getLibreriaAux()));
             // Clausula WHERE para el eliminar los registros
             stmt.setString(1, empaqueAux.getNroFactura());
             stmt.setString(2, empaqueAux.getPrefijo());
+            stmt.setString(3, empaqueAux.getSubNroFactura());
             rs = stmt.executeQuery();
             while (rs.next()) {
                 try {
@@ -502,6 +497,7 @@ public class ListasEmpaqueFacDao {
                     billAux.setVolumenTotal(Double.parseDouble(rs.getString(7)));
                     billAux.setTelefono(rs.getString(9).trim());
                     billAux.setCorreo(rs.getString(10).trim());
+                    billAux.setSubNroFactura(rs.getString(11).trim());
                 } catch (Exception ddilefsbh001) {
                     exceptionPOSTGRES.saveInBd(new ExceptionDataOperation(-1, null, null, "dao.distribucion", "ListasEmpaqueFacDao", "selectionBillHeader", "ddilefsbh001", "SELECT", ddilefsbh001.getMessage(), null, null));
                 }
@@ -595,6 +591,7 @@ public class ListasEmpaqueFacDao {
             stmt.setInt(index++, facAux.getEstado());
             stmt.setString(index++, facAux.getTelefono());
             stmt.setString(index++, facAux.getCorreo());
+            stmt.setString(index++, facAux.getSubNroFactura());
             stmt.execute();
 
             last_dml_execute = stmt.getResultSet();
@@ -742,13 +739,14 @@ public class ListasEmpaqueFacDao {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        Facturas facAux = new Facturas(-1, "", empaqueAux.getPrefijo(), empaqueAux.getNroFactura(), new ArrayList<>());
+        Facturas facAux = new Facturas(-1, "", empaqueAux.getPrefijo(), empaqueAux.getNroFactura(), empaqueAux.getSubNroFactura(), new ArrayList<>());
 
         try {
             conn = sesion.getConexionPOSTGRES();
             stmt = conn.prepareStatement(this.SQL_SELECT_BILL_STATE);
             stmt.setInt(1, Integer.parseInt(empaqueAux.getNroFactura()));
             stmt.setString(2, empaqueAux.getPrefijo());
+            stmt.setString(3, empaqueAux.getSubNroFactura());
             rs = stmt.executeQuery();
             while (rs.next()) {
                 facAux.setIdListaEmpaque(rs.getInt(1));
@@ -810,12 +808,13 @@ public class ListasEmpaqueFacDao {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        Facturas facAux = new Facturas(-1, "", empaqueAux.getPrefijo(), empaqueAux.getNroFactura(), new ArrayList<>());
+        Facturas facAux = new Facturas(-1, "", empaqueAux.getPrefijo(), empaqueAux.getNroFactura(), empaqueAux.getSubNroFactura(),new ArrayList<>());
         try {
             conn = sesion.getConexionPOSTGRES();
             stmt = conn.prepareStatement(this.SQL_SELECT_BILL_HEADER_CREATED);
             stmt.setInt(1, Integer.parseInt(facAux.getNroFactura()));
             stmt.setString(2, facAux.getPrefijo());
+            stmt.setString(3, facAux.getSubNroFactura());
             rs = stmt.executeQuery();
             while (rs.next()) {
                 facAux.setIdListaEmpaque(rs.getInt(1));
@@ -835,6 +834,7 @@ public class ListasEmpaqueFacDao {
                 facAux.setEstado(rs.getInt(15));
                 facAux.setTelefono(rs.getString(16));
                 facAux.setCorreo(rs.getString(17));
+                facAux.setSubNroFactura(rs.getString(18));                
             }
 
             stmt = conn.prepareStatement(this.SQL_SELECT_BILL_LINES_CREATED);
@@ -872,6 +872,7 @@ public class ListasEmpaqueFacDao {
             stmt.setInt(2, facAux.getListaLiosAgrupada().get(facAux.getListaLiosAgrupada().size() - 1).getIdLio());
             stmt.setInt(3, Integer.parseInt(facAux.getNroFactura()));
             stmt.setString(4, facAux.getPrefijo());
+            stmt.setString(5, facAux.getSubNroFactura());
             stmt.executeUpdate();
             return true;
         } catch (SQLException ddileubh001) {
@@ -1063,6 +1064,7 @@ public class ListasEmpaqueFacDao {
                 listaEmpaCabeTemp.setEstado(rs.getInt(15));
                 listaEmpaCabeTemp.setTelefono(rs.getString(16));
                 listaEmpaCabeTemp.setCorreo(rs.getString(17));
+                listaEmpaCabeTemp.setSubNroFactura(rs.getString(18));                
 
                 // Detalles Lista de Empaque
                 while (rs2.next()) {
@@ -1102,7 +1104,7 @@ public class ListasEmpaqueFacDao {
             stmt.setString(2, empaqueAux.getPrefijo());
             rs = stmt.executeQuery();
             while (rs.next()) {
-                Facturas facAux = new Facturas(-1, "", empaqueAux.getPrefijo(), empaqueAux.getNroFactura(), new ArrayList<>());
+                Facturas facAux = new Facturas(-1, "", empaqueAux.getPrefijo(), empaqueAux.getNroFactura(), empaqueAux.getSubNroFactura(), new ArrayList<>());
                 facAux.setIdListaEmpaque(rs.getInt(1));
                 facAux.setIdFacturaAS(rs.getString(2));
                 facAux.setPrefijo(rs.getString(3));
@@ -1120,6 +1122,7 @@ public class ListasEmpaqueFacDao {
                 facAux.setEstado(rs.getInt(15));
                 facAux.setTelefono(rs.getString(16));
                 facAux.setCorreo(rs.getString(17));
+                facAux.setSubNroFactura(rs.getString(18));
                 stmt2 = conn.prepareStatement(this.SQL_SELECT_BILL_LINES_GROUP_CREATED);
                 stmt2.setInt(1, facAux.getIdListaEmpaque());
                 rs2 = stmt2.executeQuery();
@@ -1160,7 +1163,7 @@ public class ListasEmpaqueFacDao {
             Array cantidadVecAux;
 
             //    String sqlUpdateUnities = "SELECT idfacturaas, idcliente, descripcioncliente, fecha, origen, destino, direccion, totalpaquetes, pesototal, volumentotal, prefijo, nrofactura FROM distribucion.lista_empaque_cabecera where idfacturaas=ANY(?::character varying[])";
-            String sqlUpdateUnities = "SELECT idfacturaas, idcliente, descripcioncliente, fecha, origen, destino, direccion, totalpaquetes, pesototal, volumentotal, prefijo, nrofactura, telefono, correo FROM distribucion.lista_empaque_cabecera where idfacturaas IN(";
+            String sqlUpdateUnities = "SELECT idfacturaas, idcliente, descripcioncliente, fecha, origen, destino, direccion, totalpaquetes, pesototal, volumentotal, prefijo, nrofactura, telefono, correo, subnrofactura FROM distribucion.lista_empaque_cabecera where idfacturaas IN(";
 
             cantidadVec = cantItem.toArray(new String[cantItem.size()]);
             for (int i = 0; i < cantidadVec.length; i++) {
@@ -1191,6 +1194,7 @@ public class ListasEmpaqueFacDao {
                 listaTemp.setNroFactura(rs.getString(12));
                 listaTemp.setTelefono(rs.getString(13));
                 listaTemp.setCorreo(rs.getString(14));
+                listaTemp.setSubNroFactura(rs.getString(15));
                 cabeceras.add(listaTemp);
             }
 
