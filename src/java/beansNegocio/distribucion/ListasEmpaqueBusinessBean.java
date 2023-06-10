@@ -778,7 +778,7 @@ public class ListasEmpaqueBusinessBean implements IListasEmpaqueBusinessBean {
                 Row header = sheet.createRow(k++);
                 Cell cell = header.createCell(0);
                 cell.setCellStyle(style);
-                cell.setCellValue("Factura:" + listBills.get(i).getNroFactura());
+                cell.setCellValue("Orden:" + listBills.get(i).getNroFactura() + " - SubOrden:" + listBills.get(i).getSubNroFactura());
                 cell.setCellStyle(style);
 
                 style.setBorderTop(BorderStyle.THIN);

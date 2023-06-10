@@ -707,7 +707,7 @@ public class ListasEmpaqueFacBean {
             SimpleDateFormat objSDF = new SimpleDateFormat(strDateFormat);
 
             //String filename = "FacturaXEmpaque" + objSDF.format(fecha) + ".xls";
-            String filename = "FacturaXEmpaque.xls";
+            String filename = "OrdenXEmpaque.xls";
             HSSFWorkbook workbook = this.listasEmpaqueBusinessBean.generateXLSDetailsList(listaFacturas);
 
             FacesContext facesContext = FacesContext.getCurrentInstance();

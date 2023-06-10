@@ -29,7 +29,7 @@
 
             <p:panel>
                 <p:fieldset legend="Buscar por Rango de Ordenes" style="margin-bottom:20px">
-                    <p:panelGrid columns="2" style="display:inline-block;" layout="grid">
+                    <p:panelGrid columns="1" layout="grid">
                         <p:outputLabel for="prefijoFactura" value="Prefijo de Orden: " />
                         <p:selectOneMenu id="prefijoFactura" value="#{ListasEmpaqueFacBean.prefijoFactura}" style="width:100%">
                             <f:selectItem itemLabel="CN" itemValue="CN" />
@@ -57,13 +57,13 @@
                         </p:inputText>
                     </p:panelGrid>
 
-                    <p:panelGrid columns="2" style="display:inline-block;">
+                    <p:panelGrid columns="2" style="display:inline-block; padding-left: 1em;">
                         <p:outputLabel for="fechaInicio" value="Fecha Inicio: " />
                         <p:calendar id="fechaInicio" value="#{ListasEmpaqueFacBean.fechaInicio}" locale="es" navigator="true" pattern="yyyy-MM-dd"/>
 
                     </p:panelGrid>
 
-                    <p:panelGrid columns="2" style="display:inline-block;">
+                    <p:panelGrid columns="2" style="display:inline-block; padding-left: 5em;">
                         <p:outputLabel for="fechaFin" value="Fecha Final: " />
                         <p:calendar id="fechaFin" value="#{ListasEmpaqueFacBean.fechaFin}" locale="es" navigator="true" pattern="yyyy-MM-dd" />
                     </p:panelGrid>
@@ -90,38 +90,38 @@
                                                     <p:selectBooleanCheckbox value="12" label="Basic" />
                                                 </p:column>-->
 
-                        <p:column headerText="Paqueteo">
+                        <p:column headerText="Paqueteo" class="width6em">
                             <!--<p:selectBooleanCheckbox value="12" label="Basic" />-->
                             <p:selectBooleanCheckbox value="#{ListasEmpaqueFacBean.checked[listas]}" label="Basic"/>
                         </p:column>
 
-                        <p:column headerText="Orden">
+                        <p:column headerText="Orden" class="width7em">
                             <h:outputText value="#{listas.factura}" />
                         </p:column>
                         
                         <p:column headerText="SubOrden">
-                            <h:outputText value="#{listas.subNroFactura}" />
+                            <h:outputText value="#{listas.subNroFactura}"/>
                         </p:column>
 
-                        <p:column headerText="Cliente">
+                        <p:column headerText="Cliente" class="width12em">
                             <h:outputText value="#{listas.cliente}" />
                         </p:column>
 
-                        <p:column headerText="Destino">
+                        <p:column headerText="Destino" class="width9_5em">
                             <h:outputText value="#{listas.destino}" />
                         </p:column>
 
-                        <p:column headerText="No. Lineas">
+                        <p:column headerText="No. Lineas" class="width5em">
                             <h:outputText value="#{listas.nroLineas}" />
                         </p:column>
 
-                        <p:column headerText="Peso">
+                        <p:column headerText="Peso" class="width7em">
                             <h:outputText value="#{listas.peso}">
                                 <f:convertNumber pattern="#0.000" locale="en"/>
                             </h:outputText>
                         </p:column>
 
-                        <p:column headerText="Volumen">
+                        <p:column headerText="Volumen" class="width7em">
                             <h:outputText value="#{listas.volumen}">
                                 <f:convertNumber pattern="#0.000" locale="en"/>
                             </h:outputText>
@@ -167,7 +167,7 @@
                                                                                                     <p:dataExporter type="pdf" target="datatablefacturas" fileName="lios"/>
                                                                                                 </h:commandLink>-->
                                 <p:commandButton onclick="PF('dialogShowUnities').show()" update=":form_export:bilenv" id="btn_lista_lios_exportar" title="BillEnv" action="#{ListasEmpaqueFacBean.exportarExcel}" style="margin-right:20px;" icon="fa fa-file-excel-o" value="BillEnv" />
-                                <p:commandButton ajax="false" value="FacturaXEmpaque" id="btn_lista_facturas_expo"
+                                <p:commandButton ajax="false" value="OrdenXEmpaque" id="btn_lista_facturas_expo"
                                                  action="#{ListasEmpaqueFacBean.getGenerateXls}" update=":form_lio:msgs"
                                                  style="margin-right:20px;" icon="fa fa-file-excel-o" />
                             </div>
@@ -414,8 +414,11 @@
                             <f:convertNumber pattern="#0" locale="en"/>                             
                         </h:outputText>                                         
                     </p:column>
-                    <p:column headerText="Numero de Factura">
+                    <p:column headerText="Numero de Orden">
                         <h:outputText value="#{listasCabeceras.nroFactura}" />                                         
+                    </p:column>
+                    <p:column headerText="SubOrden">
+                        <h:outputText value="#{listasCabeceras.subNroFactura}" />                                         
                     </p:column>
                 </p:dataTable>
             </p:dialog>
@@ -514,7 +517,7 @@
                                 </p:row>
                                 <p:row>
                                     <p:column>
-                                        <h:outputText value="Factura" />
+                                        <h:outputText value="N° Orden" />
                                     </p:column>
                                     <p:column>
                                         <h:outputText value="#{listasPrevias.idFacturaAS}" />
@@ -524,6 +527,14 @@
                                     </p:column>
                                     <p:column>
                                         <h:outputText value="#{listasPrevias.idListaEmpaque}" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column colspan="2">
+                                        <h:outputText value="SubOrden" />
+                                    </p:column>
+                                    <p:column colspan="2">
+                                        <h:outputText value="#{listasPrevias.subNroFactura}" style="width: 100%; height: 100%"/>
                                     </p:column>
                                 </p:row>
                                 <p:row>
@@ -565,7 +576,7 @@
                       modal="true" id="modal_agreg_regis">
                 <p:panel id="output">
                     <p:panelGrid columns="3">
-                        <p:outputLabel for="nroFactura" value="Numero de Factura:"/>
+                        <p:outputLabel for="nroFactura" value="Numero de Orden:"/>
                         <h:outputText id="nroFactura" value="#{ListasEmpaqueFacBean.temporalFactura.nroFactura}" />
                         <p:message for="nroFactura" />
 

@@ -1102,6 +1102,7 @@ public class ListasEmpaqueFacDao {
             stmt = conn.prepareStatement(this.SQL_SELECT_BILL_HEADER_CREATED);
             stmt.setInt(1, Integer.parseInt(empaqueAux.getNroFactura()));
             stmt.setString(2, empaqueAux.getPrefijo());
+            stmt.setString(3, empaqueAux.getSubNroFactura());
             rs = stmt.executeQuery();
             while (rs.next()) {
                 Facturas facAux = new Facturas(-1, "", empaqueAux.getPrefijo(), empaqueAux.getNroFactura(), empaqueAux.getSubNroFactura(), new ArrayList<>());

@@ -65,3 +65,31 @@ body .ui-dialog-custom{
 body .titulo_previa{
     text-align: center !important;
 }
+
+.width5em{
+    width: 5em;
+}
+.width6em{
+    width: 6em;
+}
+.width7em{
+    width: 7em;
+}
+.width8em{
+    width: 8em;
+}
+.width9em{
+    width: 9em;
+}
+.width9_5em{
+    width: 9.5em;
+}
+.width10em{
+    width: 10em;
+}
+.width11em{
+    width: 11em;
+}
+.width12em{
+    width: 12em;
+}
