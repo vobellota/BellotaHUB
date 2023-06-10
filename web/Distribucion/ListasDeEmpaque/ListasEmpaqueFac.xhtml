@@ -29,7 +29,7 @@
 
             <p:panel>
                 <p:fieldset legend="Buscar por Rango de Ordenes" style="margin-bottom:20px">
-                    <p:panelGrid columns="1" layout="grid">
+                    <p:panelGrid columns="2" style="display:inline-block; width: 35%;" layout="grid">
                         <p:outputLabel for="prefijoFactura" value="Prefijo de Orden: " />
                         <p:selectOneMenu id="prefijoFactura" value="#{ListasEmpaqueFacBean.prefijoFactura}" style="width:100%">
                             <f:selectItem itemLabel="CN" itemValue="CN" />
@@ -42,7 +42,12 @@
                             <f:selectItem itemLabel="VT" itemValue="VT" />
                         </p:selectOneMenu>
                     </p:panelGrid>
-
+                    <p:panelGrid columns="2" style="display:inline-block; width: 35%; margin-right:100px; margin-left: 4em;" layout="grid">
+                        <p:outputLabel for="subOrdenF" value="SubOrden: " />
+                        <p:inputText id="subOrdenF"
+                                     value="#{ListasEmpaqueFacBean.subOrdenF}">
+                        </p:inputText>
+                    </p:panelGrid>
                     <p:panelGrid columns="2" style="display:inline-block; margin-right:100px;" layout="grid">
                         <p:outputLabel for="nInicial" value="N. Inicial: " />
                         <p:inputText id="nInicial"

@@ -60,7 +60,6 @@ import sys.util.Sesion;
 @ViewScoped
 @ManagedBean(name = "ListasEmpaqueFacBean")
 public class ListasEmpaqueFacBean {
-
     /**
      * Creates a new instance of ListasEmpaqueFac
      */
@@ -70,6 +69,7 @@ public class ListasEmpaqueFacBean {
     // Variables originales 
     // ********************
     private String prefijoFactura;
+    private String subOrdenF;
     private int numeroInicial;
     private int numeroFinal;
     private Date fechaInicio;
@@ -164,6 +164,21 @@ public class ListasEmpaqueFacBean {
 
     public void setFechaFin(Date fechaFin) {
         this.fechaFin = fechaFin;
+    }
+    
+    
+    /**
+     * @return the subOrdenF
+     */
+    public String getSubOrdenF() {
+        return subOrdenF;
+    }
+
+    /**
+     * @param subOrdenF the subOrdenF to set
+     */
+    public void setSubOrdenF(String subOrdenF) {
+        this.subOrdenF = subOrdenF;
     }
 
     public String getMostrarSelecciones() {
@@ -294,7 +309,7 @@ public class ListasEmpaqueFacBean {
     // *****************
     public void onSearchinReal() {
         this.getChecked().clear();
-        listaEmpaqueConsultada = listasEmpaqueBusinessBean.onConvertVariables(prefijoFactura, numeroInicial, numeroFinal, fechaInicio, fechaFin);
+        listaEmpaqueConsultada = listasEmpaqueBusinessBean.onConvertVariables(prefijoFactura, subOrdenF, numeroInicial, numeroFinal, fechaInicio, fechaFin);
     }
 
     /**

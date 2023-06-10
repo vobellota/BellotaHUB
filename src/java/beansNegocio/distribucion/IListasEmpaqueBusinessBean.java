@@ -26,7 +26,7 @@ public interface IListasEmpaqueBusinessBean {
 
     public List<Facturas> getBillsLios(List<ListasEmpaqueFac> listaEmpaqueSeleccionada);
 
-    public List<ListasEmpaqueFac> onConvertVariables(String prefijoFactura, int numeroInicial, int numeroFinal, Date fechaInicio, Date fechaFin);
+    public List<ListasEmpaqueFac> onConvertVariables(String prefijoFactura, String subOrdenF, int numeroInicial, int numeroFinal, Date fechaInicio, Date fechaFin);
 
     public boolean postGuardarListaEmpaque(Facturas facAux);
     

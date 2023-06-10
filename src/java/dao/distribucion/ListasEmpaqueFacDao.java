@@ -215,7 +215,7 @@ public class ListasEmpaqueFacDao {
      * @param enterofechaFin, fecha final del rango de facturas
      * @return Lista de listas de empaque consultadas
      */
-    public List<ListasEmpaqueFac> real_range(String prefijoFactura, String enteronumeroInicial, String enteronumeroFinal, String enterofechaInicio, String enterofechaFin) throws SQLException {
+    public List<ListasEmpaqueFac> real_range(String prefijoFactura, String subOrdenF, String enteronumeroInicial, String enteronumeroFinal, String enterofechaInicio, String enterofechaFin) throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -242,6 +242,10 @@ public class ListasEmpaqueFacDao {
             }
             if (enterofechaInicio != null && enterofechaFin != null) {
                 condicion = condicion + " AND VARCHAR_FORMAT(LE.FECHAORDEN, 'YYYYMMDD') BETWEEN '" + enterofechaInicio + "' AND '" + enterofechaFin + "'";
+            }
+            
+            if (subOrdenF != null && !subOrdenF.equals("")) {
+                condicion = condicion + " AND LOWER(LE.IDTRX) LIKE '%" + subOrdenF.toLowerCase() + "%'";
             }
 
             condicion = condicion + " GROUP BY S.CHPREF, S.HORD, R.CNME, LE.FECHAORDEN, S.HCUST, P.PCLCTN, S.HLINS, LE.IDTRX)T2\n" +

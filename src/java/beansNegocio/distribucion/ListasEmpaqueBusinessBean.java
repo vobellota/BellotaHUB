@@ -402,7 +402,7 @@ public class ListasEmpaqueBusinessBean implements IListasEmpaqueBusinessBean {
      * @return Devuelve una lista con las facturas obtenidas en el rango dado.
      */
     @Override
-    public List<ListasEmpaqueFac> onConvertVariables(String prefijoFactura, int numeroInicial, int numeroFinal, Date fechaInicio, Date fechaFin) {
+    public List<ListasEmpaqueFac> onConvertVariables(String prefijoFactura, String subOrdenF, int numeroInicial, int numeroFinal, Date fechaInicio, Date fechaFin) {
 
         // Creacion de lista auxiliar para retornar
         // ****************************************
@@ -428,7 +428,7 @@ public class ListasEmpaqueBusinessBean implements IListasEmpaqueBusinessBean {
         ListasEmpaqueFacDao listaempaquedao = new ListasEmpaqueFacDao();
         try {
             // Arreglo que declaré arriba
-            listaAux = listaempaquedao.real_range(prefijoFactura, enteronumeroInicial, enteronumeroFinal, enterofechaInicio, enterofechaFin);
+            listaAux = listaempaquedao.real_range(prefijoFactura, subOrdenF, enteronumeroInicial, enteronumeroFinal, enterofechaInicio, enterofechaFin);
         } catch (SQLException ex) {
             Logger.getLogger(ListasEmpaqueFacBean.class.getName()).log(Level.SEVERE, null, ex);
         }
