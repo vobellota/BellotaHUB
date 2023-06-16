@@ -56,7 +56,7 @@ public class ListasEmpaqueFacDao {
                         "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                         "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
                         "INNER JOIN LPC P ON R.CZIP = P.PCPSCD\n" +
-                        "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                        "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD AND LE.SKU = L.LPROD\n" +
                         "WHERE LE.FECHAORDEN BETWEEN ? AND ? \n" +
                         "GROUP BY S.CHPREF, S.HORD, R.CNME, LE.FECHAORDEN, S.HCUST, P.PCLCTN, S.HLINS,LE.IDTRX)T2\n" +
                         "ORDER BY T2.prefijo,T2.nrofac ASC";
@@ -68,7 +68,7 @@ public class ListasEmpaqueFacDao {
                     "FROM ECH S\n" +
                     "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                     "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD AND LE.SKU = L.LPROD\n" +
                     "LEFT JOIN |LIBRERIAAUX|.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
                     "WHERE C.CODITEMBILLED IS NULL\n" +
                     "AND S.HDTYP IN (1,2)\n" +
@@ -81,7 +81,7 @@ public class ListasEmpaqueFacDao {
                     "FROM ECH S\n" +
                     "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                     "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD\n" +
+                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD AND LE.SKU = L.LPROD\n" +
                     "INNER JOIN |LIBRERIAAUX|.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
                     "WHERE\n" +
                     "S.HDTYP IN (1,2)\n" +
@@ -97,7 +97,7 @@ public class ListasEmpaqueFacDao {
                     "FROM ECH S\n" +
                     "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                     "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD AND LE.SKU = L.LPROD\n" +
                     "LEFT JOIN |LIBRERIAAUX|.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
                     "WHERE C.CODITEMBILLED IS NULL\n" +
                     "AND S.HDTYP IN (1,2)\n" +
@@ -110,7 +110,7 @@ public class ListasEmpaqueFacDao {
                     "FROM ECH S\n" +
                     "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                     "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                    "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD AND LE.SKU = L.LPROD\n" +
                     "INNER JOIN |LIBRERIAAUX|.LEITEMSCOMPOSED C ON C.CODITEMBILLED = I.IPROD\n" +
                     "WHERE\n" +
                     "S.HDTYP IN (1,2) AND S.HORD =? AND S.CHPREF =? AND LE.IDTRX =?\n" +
@@ -140,7 +140,7 @@ public class ListasEmpaqueFacDao {
                 "INNER JOIN  RCM R ON (S.HCUST=R.CCUST)\n" +
                 "INNER JOIN ECL L ON L.LORD = S.HORD\n" +
                 "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
-                "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD AND LE.SKU = L.LPROD\n" +
                 "LEFT JOIN ZCC Z ON (Z.CCCODE = R.CSTE AND Z.CCTABL = 'STATE')\n" +
                 "INNER JOIN LPC M ON M.PCPSCD = S.HPOST\n" +
                 "WHERE S.HORD =? AND S.CHPREF =? AND LE.IDTRX =?) T0\n" +
@@ -234,7 +234,7 @@ public class ListasEmpaqueFacDao {
                                 "INNER JOIN ECL L ON l.LORD = S.HORD\n" +
                                 "INNER JOIN IIM I ON I.IPROD = L.LPROD\n" +
                                 "INNER JOIN LPC P ON R.CZIP = P.PCPSCD\n" +
-                                "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD \n" +
+                                "INNER JOIN |LIBRERIAAUX|.WMS_LISTAEMPAQUE LE ON LE.ORDENDESALIDA = S.HORD AND LE.SKU = L.LPROD\n" +
                                 "WHERE S.CHPREF = '" + prefijoFactura + "' AND S.CHUTYP NOT IN ('V','7')";
 
             if (enteronumeroInicial != null && enteronumeroFinal != null) {
